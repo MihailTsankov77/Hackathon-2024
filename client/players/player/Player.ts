@@ -27,5 +27,7 @@ export class Player {
       },
       this
     );
+
+    this.game.cameras.main.startFollow(this.unit.sprite);
   }
 }
