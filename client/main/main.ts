@@ -6,6 +6,12 @@ const config: Phaser.Types.Core.GameConfig = {
   width: window.innerHeight * 2,
   height: window.innerHeight,
   scene: [MainScene],
+  physics: {
+    default: "arcade", //the physics engine the game will use
+    arcade: {
+      debug: false,
+    },
+  },
 };
 
 export default new Phaser.Game(config);

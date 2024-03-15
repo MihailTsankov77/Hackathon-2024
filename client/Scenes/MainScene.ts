@@ -1,7 +1,9 @@
 import Phaser from "phaser";
 import { preloadImages } from "../utils/images";
+import { Player } from "../player/Player";
 
 export default class MainScene extends Phaser.Scene {
+  player: Player;
   constructor() {
     super("MainScene");
   }
@@ -13,8 +15,10 @@ export default class MainScene extends Phaser.Scene {
   }
 
   create() {
-    this.add.image(window.innerWidth / 2, window.innerHeight / 2, "player");
+    this.player = new Player(500, 500, this);
   }
 
-  update() {}
+  update() {
+    this.player.update();
+  }
 }
