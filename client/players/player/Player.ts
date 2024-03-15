@@ -5,6 +5,7 @@ export class Player {
 
   unit: Unit;
   game: Phaser.Scene;
+  pointer: Phaser.Input.Pointer;
 
   constructor(x: number, y: number, game: Phaser.Scene) {
     this.game = game;
@@ -14,23 +15,12 @@ export class Player {
       scale: 1,
     });
 
-    // this.game.input.on(
-    //   "pointermove",
-    //   (pointer) => {
-    //     // if (pointer.isDown) { // TODO
-    //     this.unit.goto(this.game.input);
-    //   },
-    //   this
-    // );
-
     this.game.cameras.main.startFollow(this.unit.sprite);
+    this.pointer = this.game.input.activePointer;
   }
 
   update() {
-    var pointer = this.game.input.activePointer;
-    var dx = pointer.worldX + this.unit.sprite.x;
-    var dy = pointer.worldY + this.unit.sprite.y;
-    console.log(dx, dy);
-    this.unit.goto({ x: pointer.worldX, y: pointer.worldY });
+    // TODO: bug when the mouse is not moved for long time
+    this.unit.goto(this.pointer.worldX, this.pointer.worldY);
   }
 }

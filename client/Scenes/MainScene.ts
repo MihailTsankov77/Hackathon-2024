@@ -31,7 +31,7 @@ export default class MainScene extends Phaser.Scene {
     );
     background.setOrigin(0, 0);
 
-    this.physics.world.setBounds(0, 0, gameWidth, gameHeight); // TODO move the borders in the center of the map with offset in every dir
+    this.physics.world.setBounds(0, 0, gameWidth, gameHeight);
   }
 
   create() {
@@ -43,7 +43,7 @@ export default class MainScene extends Phaser.Scene {
       scale: 0.7,
     });
 
-    this.unit.goto({ x: window.innerWidth, y: window.innerHeight });
+    this.unit.goto(window.innerWidth, window.innerHeight);
   }
 
   update() {
