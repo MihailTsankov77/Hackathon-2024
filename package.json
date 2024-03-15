@@ -4,19 +4,21 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "startCl": "parcel client/main/index.html -p 8000"
+    "startCl": "parcel client/main/index.html -p 8000",
+    "startServer": "cd server/ && nodemon --exec \"go run\" cmd/server/main.go && cd ../"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "phaser": "^3.80.1",
-    "typescript": "^3.8.3",
     "cssnano": "^5.1.15",
     "minimist": ">=1.2.2",
+    "nodemon": "^3.1.0",
     "parcel-plugin-clean-easy": "^1.0.2",
     "parcel-plugin-static-files-copy": "^2.4.3",
-    "postcss": "^8.4.21"
+    "phaser": "^3.80.1",
+    "postcss": "^8.4.21",
+    "typescript": "^3.8.3"
   },
   "staticFiles": {
     "staticPath": "client/assets",
