@@ -19,8 +19,13 @@ export class Unit {
     this.game = game;
 
     this.sprite = this.game.physics.add.sprite(x, y, spriteConfig.name);
+    this.sprite.setScale(spriteConfig.scale);
+    // this.sprite.body.setSize(
+    //   this.sprite.width * spriteConfig.scale,
+    //   this.sprite.height * spriteConfig.scale,
+    //   true
+    // );
     this.sprite.setCollideWorldBounds(true);
-    this.sprite.scale = spriteConfig.scale;
   }
 
   goto(coordinates: { x: number; y: number }): void {

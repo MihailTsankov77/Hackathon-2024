@@ -30,19 +30,15 @@ export default class MainScene extends Phaser.Scene {
       "background"
     );
     background.setOrigin(0, 0);
-    // background.setPosition(
-    //   (gameWidth - background.width) / 2,
-    //   (gameHeight - background.height) / 2
-    // );
 
-    this.physics.world.setBounds(0, 0, gameWidth / 2, gameHeight / 2); // TODO move the borders in the center of the map with offset in every dir
+    this.physics.world.setBounds(0, 0, gameWidth, gameHeight); // TODO move the borders in the center of the map with offset in every dir
   }
 
   create() {
     this.setUpCameraAndBackground();
 
     this.player = new Player(500, 500, this);
-    this.unit = new Unit(0, 0, this, {
+    this.unit = new Unit(200, 200, this, {
       name: "slavi",
       scale: 0.7,
     });
@@ -50,5 +46,7 @@ export default class MainScene extends Phaser.Scene {
     this.unit.goto({ x: window.innerWidth, y: window.innerHeight });
   }
 
-  update() {}
+  update() {
+    this.player.update();
+  }
 }
