@@ -9,8 +9,7 @@ export default class MainScene extends Phaser.Scene {
   init() {}
 
   preload() {
-    console.log("HI");
-    this.load.image("player", "player.png");
+    preloadImages(this);
   }
 
   create() {
