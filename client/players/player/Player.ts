@@ -1,4 +1,4 @@
-import { Key, Sprite } from "../utils/types";
+import { Key, Sprite } from "../../utils/types";
 
 export class Player {
   SPEED = 200;
