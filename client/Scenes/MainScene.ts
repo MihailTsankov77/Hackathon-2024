@@ -18,12 +18,13 @@ export default class MainScene extends Phaser.Scene {
 
   create() {
     this.player = new Player(500, 500, this);
-    this.unit = new Unit(1000, 700, this);
+    this.unit = new Unit(0, 0, this, {
+      name: "slavi",
+      scale: 0.7,
+    });
 
-    this.unit.goto(2000, 700);
+    this.unit.goto(window.innerWidth, window.innerHeight);
   }
 
-  update() {
-    this.player.update();
-  }
+  update() {}
 }

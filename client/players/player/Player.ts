@@ -1,4 +1,5 @@
-import { Key, Sprite } from "../../utils/types";
+import { Key } from "../../utils/types";
+import { Unit } from "../units/Unit";
 
 export class Player {
   SPEED = 200;
@@ -7,43 +8,24 @@ export class Player {
   keyD: Key = {} as Key;
   keyW: Key = {} as Key;
 
-  sprite: Sprite = {} as Sprite;
+  unit: Unit;
   game: Phaser.Scene = {} as Phaser.Scene;
 
   constructor(x: number, y: number, game: Phaser.Scene) {
     this.game = game;
 
-    this.sprite = game.physics.add.sprite(x, y, "player");
-    this.sprite.scale = 0.2; // TODO
-    this.sprite.setCollideWorldBounds(true);
+    this.unit = new Unit(x, y, game, {
+      name: "player",
+      scale: 0.2,
+    });
 
-    if (game.input.keyboard) {
-      this.keyA = game.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
-      this.keyS = game.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
-      this.keyD = game.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
-      this.keyW = game.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
-    }
-  }
-
-  update(): void {
-    this.move();
-  }
-
-  move(): void {
-    if (this.keyA.isDown) {
-      this.sprite.setVelocityX(-this.SPEED);
-    }
-
-    if (this.keyD.isDown) {
-      this.sprite.setVelocityX(this.SPEED);
-    }
-
-    if (this.keyW.isDown) {
-      this.sprite.setVelocityY(-this.SPEED);
-    }
-
-    if (this.keyS.isDown) {
-      this.sprite.setVelocityY(this.SPEED);
-    }
+    this.game.input.on(
+      "pointermove",
+      (pointer) => {
+        // if (pointer.isDown) { // TODO
+        this.unit.goto(this.game.input.x, this.game.input.y);
+      },
+      this
+    );
   }
 }
