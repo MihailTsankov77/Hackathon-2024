@@ -23,7 +23,7 @@ export class Player {
       "pointermove",
       (pointer) => {
         // if (pointer.isDown) { // TODO
-        this.unit.goto(this.game.input.x, this.game.input.y);
+        this.unit.goto(this.game.input);
       },
       this
     );

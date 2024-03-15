@@ -18,27 +18,30 @@ export class Unit {
   ) {
     this.game = game;
 
-    this.sprite = game.physics.add.sprite(x, y, spriteConfig.name);
+    this.sprite = this.game.physics.add.sprite(x, y, spriteConfig.name);
+    this.sprite.setCollideWorldBounds(true);
     this.sprite.scale = spriteConfig.scale;
   }
 
-  goto(x: number, y: number): void {
-    const distance = Math.sqrt(
-      (this.sprite.x - x) ** 2 + (this.sprite.y - y) ** 2
-    );
+  goto(coordinates: { x: number; y: number }): void {
+    // const distance = Math.sqrt(
+    //   (this.sprite.x - x) ** 2 + (this.sprite.y - y) ** 2
+    // );
 
-    const duration = (distance / this.SPEED) * 1000;
+    // const duration = (distance / this.SPEED) * 1000;
 
-    this.game.tweens.add({
-      targets: this.sprite,
-      x,
-      y,
-      duration,
-      ease: "Linear",
-      onComplete: function () {
-        // TODO
-        console.log("Sprite reached destination!");
-      },
-    });
+    // this.game.tweens.add({
+    //   targets: this.sprite,
+    //   x,
+    //   y,
+    //   duration,
+    //   ease: "Linear",
+    //   onComplete: function () {
+    //     // TODO
+    //     console.log("Sprite reached destination!");
+    //   },
+    // });
+
+    this.game.physics.moveToObject(this.sprite, coordinates, this.SPEED);
   }
 }
