@@ -78,6 +78,7 @@ export default class MainScene extends Phaser.Scene {
       case "id": {
         this.playerId = parseInt(data);
         this.player.setId(this.playerId);
+
         break;
       }
       case "heartbeat": {

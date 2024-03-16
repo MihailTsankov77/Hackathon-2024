@@ -3,10 +3,12 @@ package internal
 import (
 	"encoding/json"
 	"fmt"
+	"sort"
 	"strconv"
 	"strings"
 
 	"github.com/gorilla/websocket"
+	"golang.org/x/exp/maps"
 )
 
 type Player struct {
@@ -69,6 +71,22 @@ func isPlayerDead(player Player) bool {
 	return player.Points < 0
 }
 
+type ByPoints []Player
+
+func (a ByPoints) Len() int {
+	return len(a)
+}
+func (a ByPoints) Less(i, j int) bool {
+	return a[i].Points > a[j].Points
+}
+func (a ByPoints) Swap(i, j int) {
+	a[i], a[j] = a[j], a[i]
+}
+
+func leaderboardUpdate() {
+
+	sort.Sort(ByPoints(maps.Values(players)))
+}
 func handleCommands(conn *websocket.Conn, message []byte) {
 	cmd := strings.SplitN(string(message), " ", 2)
 	if cmd[0] == "join" {
@@ -118,13 +136,15 @@ func handleCommands(conn *websocket.Conn, message []byte) {
 			return
 		}
 
-		players[playerId] = Player{
-			Id:       players[playerId].Id,
-			X:        pX,
-			Y:        pY,
-			Points:   players[playerId].Points,
-			Cooldown: players[playerId].Cooldown,
+		if !(players[playerId].X == pX && players[playerId].Y == pY) {
+
+			player := players[playerId]
+			player.X = pX
+			player.Y = pY
+
+			players[playerId] = player
 		}
+
 	} else if cmd[0] == "collision" {
 		battle := Battle{}
 		err := json.Unmarshal([]byte(cmd[1]), &battle)
