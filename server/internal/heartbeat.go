@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"time"
-
-	"golang.org/x/exp/maps"
 )
 
 var heartBeates = 0
@@ -13,8 +11,8 @@ var heartBeates = 0
 var HeartbeatTicker = time.NewTicker(20 * time.Millisecond)
 
 type HeartbeatResponse struct {
-	Players     []Player `json:"players"`
-	Connections [][]int  `json:"connections"`
+	Players     map[int]Player `json:"players"`
+	Connections [][]int        `json:"connections"`
 }
 
 func heartbeat() {
@@ -29,7 +27,7 @@ func heartbeat() {
 	}
 
 	response := HeartbeatResponse{
-		Players:     maps.Values(players),
+		Players:     players,
 		Connections: playerConnections,
 	}
 
