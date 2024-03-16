@@ -30,7 +30,7 @@ export class Unit {
     this.sprite.setScale(spriteConfig.scale);
     this.sprite.setCollideWorldBounds(true);
     this.score= new Score(x+40,y,game)
-    this.timer = new Timer(0,window.innerHeight, game);
+    this.timer = new Timer(x-150,y-150, game);
     //Marti
   }
 

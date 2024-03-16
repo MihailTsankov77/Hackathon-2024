@@ -3,12 +3,13 @@ import Phaser from "phaser";
 export class Timer{
     time:number
     
-    timeText ;
+    timeText: Phaser.GameObjects.Text;
 
     constructor(x:number,y:number,game: Phaser.Scene){
         this.time=0;
         
-        this.timeText= game.add.text(x,y,"10",{color: '#000000',fontSize: 22, fontStyle:'bold'});
+        this.timeText= game.add.text(x,y,"10",{color: '#000000',fontSize: 72, fontStyle:'bold'});
+        this.timeText.setActive(true);
     }
 
     update(newTime:number){

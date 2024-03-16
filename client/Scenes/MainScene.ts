@@ -3,6 +3,7 @@ import { preloadImages } from "../utils/images";
 import { Bot } from "../players/units/Bot";
 import { SocketConnection } from "../connection/connectionMain";
 import { PlayerGroup } from "../players/player/PlayerGroup";
+import { Timer } from "../players/units/Timer";
 
 // TODO move
 
@@ -31,6 +32,8 @@ export default class MainScene extends Phaser.Scene {
   playersData: Record<number, PlayerData> = {};
 
   socket: SocketConnection;
+
+  timer: Timer;
 
   constructor() {
     super("MainScene");
@@ -82,7 +85,7 @@ export default class MainScene extends Phaser.Scene {
 
   create() {
     this.setUpCameraAndBackground();
-
+    this.timer = new Timer(this.cameras.main.scrollX, this.cameras.main.scrollY, this);
     this.updateData();
 
     this.playerGroup = new PlayerGroup(
@@ -171,6 +174,8 @@ export default class MainScene extends Phaser.Scene {
 
   update() {
     this.playerGroup.update(this.socket);
+    this.timer.timeText.setPosition(this.cameras.main.scrollX - 500, this.cameras.main.scrollY - 500);
+    console.log(this.timer.timeText.getBounds())
 
     Object.values(this.botsByIds).forEach((bot) => bot.update());
 
