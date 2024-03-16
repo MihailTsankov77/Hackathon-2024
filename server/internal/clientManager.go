@@ -20,12 +20,7 @@ func (manager *ClientManager) Start() {
 			manager.Clients[conn] = -1
 		case conn := <-manager.Unregister:
 			if manager.Clients[conn] != -1 {
-				for i := range players {
-					if players[i].Id == manager.Clients[conn] {
-						players = append(players[:i], players[i+1:]...)
-						break
-					}
-				}
+				delete(players, manager.Clients[conn])
 			}
 			fmt.Println("Unregistering client")
 			delete(manager.Clients, conn)

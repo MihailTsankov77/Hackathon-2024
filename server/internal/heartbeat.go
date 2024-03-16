@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"time"
+
+	"golang.org/x/exp/maps"
 )
 
 var heartBeates = 0
@@ -18,7 +20,7 @@ func heartbeat() {
 			updatePlayers()
 		}
 
-		playersJson, err := json.Marshal(players)
+		playersJson, err := json.Marshal(maps.Values(players))
 		if err != nil {
 			fmt.Println("Failed to marshal players:", err)
 			return
