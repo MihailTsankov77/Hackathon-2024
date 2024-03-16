@@ -278,8 +278,13 @@ export default class MainScene extends Phaser.Scene {
           this.playerGroup.unit2?.id ?? 0,
           false
         );
+        this.playerGroup.player.SPEED +=10;
+        this.playerGroup.unit2!.SPEED += 10;
         return;
       }
+      
+      this.playerGroup.player.SPEED-=10;
+      this.playerGroup.unit2!.SPEED -= 10;
 
       this.socket.connect(this.playerGroup.player.unit.id, this.getClosest());
     });
