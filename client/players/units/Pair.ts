@@ -8,6 +8,8 @@ export class Pair {
   unit2: Unit;
   hand: Sprite;
 
+  MaxDistance = 800;
+
   constructor(unit1: Unit, unit2: Unit, game: Phaser.Scene) {
     this.game = game;
 
@@ -26,19 +28,19 @@ export class Pair {
     return [x, y];
   }
 
-  getDistance(): number {
+  getDistance = (): number => {
     return Math.sqrt(
       (this.unit1.sprite.x - this.unit2.sprite.x) ** 2 +
         (this.unit1.sprite.y - this.unit2.sprite.y) ** 2
     );
-  }
+  };
 
   getScale(): [number, number] {
     const scaleX = this.getDistance() / this.hand.width;
     return [scaleX, Math.min(1 - scaleX, 0.5)]; // TODO
   }
 
-  update() {
+  renderHand() {
     const coords = this.getCenterBetweenUnits();
     this.hand.x = coords[0];
     this.hand.y = coords[1];
@@ -53,4 +55,22 @@ export class Pair {
 
     this.hand.setRotation(angle);
   }
+
+  update() {
+    this.renderHand();
+  }
+
+  playSplitAnimation = () => {
+    // TODO Marinkov
+  };
+
+  maybeSplitHand = (): boolean => {
+    if (this.getDistance() < this.MaxDistance) {
+      return false;
+    }
+
+    this.playSplitAnimation();
+
+    return true;
+  };
 }

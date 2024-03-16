@@ -7,7 +7,9 @@ import { Pair } from "../players/units/Pair";
 export default class MainScene extends Phaser.Scene {
   player: Player;
 
-  pair: Pair;
+  pairs: Pair[] = [];
+
+  units: Unit[] = [];
 
   constructor() {
     super("MainScene");
@@ -47,11 +49,17 @@ export default class MainScene extends Phaser.Scene {
       scale: 0.7,
     });
 
-    this.pair = new Pair(this.player.unit, unit, this);
+    this.pairs.push(new Pair(this.player.unit, unit, this));
+
+    this.units.push(unit);
   }
 
   update() {
     this.player.update();
-    this.pair.update();
+
+    this.units.forEach((unit) => {});
+
+    this.pairs.forEach((pair) => pair.update());
+    this.pairs = this.pairs.filter((pair) => !pair.maybeSplitHand());
   }
 }
