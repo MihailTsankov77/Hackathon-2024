@@ -14,7 +14,8 @@ export class Player {
     // TODO ADD ID
     this.unit = new Unit(id, x, y, game, {
       name: "player",
-      scale: 1,
+      scale: 0.1,
+      
     });
 
     this.game.cameras.main.startFollow(this.unit.sprite);
