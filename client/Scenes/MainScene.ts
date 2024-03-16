@@ -15,7 +15,7 @@ export type PlayerData = {
   cooldown: number;
 };
 
-const mock = true;
+const mock = false;
 
 const MockPos: Record<number, PlayerData> = {
   1: {
@@ -112,7 +112,7 @@ export default class MainScene extends Phaser.Scene {
       0,
       this.gameWidth,
       this.gameHeight,
-      "background",
+      "background"
     );
     background.setOrigin(0, 0);
 
@@ -135,7 +135,7 @@ export default class MainScene extends Phaser.Scene {
         points: 0,
         cooldown: 0,
       },
-      this,
+      this
     );
 
     this.updateData();
@@ -185,7 +185,7 @@ export default class MainScene extends Phaser.Scene {
 
   killPlayers() {
     const toBeKilled = Object.keys(this.botsByIds).filter((id) =>
-      this.pairs.every((pair) => id !== this.getPairId(pair)),
+      this.pairs.every((pair) => id !== this.getPairId(pair))
     );
 
     let addIds: number[] = [];
@@ -226,7 +226,7 @@ export default class MainScene extends Phaser.Scene {
 
       this.botsByIds[id].addCollisionWithAPlayer(
         this.playerGroup,
-        this.checkWinLose,
+        this.checkWinLose
       );
     }
   }
@@ -234,11 +234,11 @@ export default class MainScene extends Phaser.Scene {
   checkWinLose = (groupOne: number[], groupTwo: number[]) => {
     const scoreGroupOne = groupOne.reduce(
       (acc, id) => acc + this.playersData[id].points,
-      0,
+      0
     );
     const scoreGroupTwo = groupTwo.reduce(
       (acc, id) => acc + this.playersData[id].points,
-      0,
+      0
     );
 
     const sender = Math.min(...groupOne.concat(groupTwo));
@@ -266,7 +266,7 @@ export default class MainScene extends Phaser.Scene {
     }
 
     const spaceBar = this.input.keyboard.addKey(
-      Phaser.Input.Keyboard.KeyCodes.SPACE,
+      Phaser.Input.Keyboard.KeyCodes.SPACE
     );
 
     spaceBar.on("down", () => {
@@ -276,7 +276,7 @@ export default class MainScene extends Phaser.Scene {
         this.socket.sendDisconnect(
           this.playerGroup.player.unit.id,
           this.playerGroup.unit2?.id ?? 0,
-          false,
+          false
         );
         return;
       }
@@ -292,7 +292,7 @@ export default class MainScene extends Phaser.Scene {
         id: bot.unit1.id,
         distance: getDistance(
           bot.unit1.sprite,
-          this.playerGroup.player.unit.sprite,
+          this.playerGroup.player.unit.sprite
         ),
       }));
 
@@ -315,7 +315,7 @@ export default class MainScene extends Phaser.Scene {
     this.timer.timeText.setText(this.playerGroup.player.unit.timer.toString());
 
     Object.values(this.botsByIds).forEach((bot) =>
-      bot.update(this.playerGroup),
+      bot.update(this.playerGroup)
     );
   }
 }
