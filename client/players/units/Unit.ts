@@ -11,6 +11,7 @@ export class Unit {
 
   score: Score = {} as Score;
   sprite: Sprite = {} as Sprite;
+  timer: number = 0;
   game: Phaser.Scene = {} as Phaser.Scene;
 
   constructor(
@@ -18,7 +19,7 @@ export class Unit {
     x: number,
     y: number,
     game: Phaser.Scene,
-    spriteConfig: SpriteConfig
+    spriteConfig: SpriteConfig,
   ) {
     this.game = game;
 
@@ -46,7 +47,7 @@ export class Unit {
     this.game.physics.moveToObject(this.sprite, { x, y }, this.SPEED);
     //this.game.physics.moveToObject(this.score.digitsSprite, { x, y:y-60 }, this.SPEED);
     //this.game.physics.moveToObject(this.score.digitsText,{ x, y:y-60 }, this.SPEED);
-
+    this.timer = newTimer;
     this.score.digitsText.setPosition(this.sprite.x - 17, this.sprite.y - 100);
     this.score.update(newScore);
 
