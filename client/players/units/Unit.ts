@@ -5,18 +5,22 @@ type SpriteConfig = {
   scale: number;
 };
 export class Unit {
+  id: number;
   SPEED = 100;
 
   sprite: Sprite = {} as Sprite;
   game: Phaser.Scene = {} as Phaser.Scene;
 
   constructor(
+    id: number,
     x: number,
     y: number,
     game: Phaser.Scene,
     spriteConfig: SpriteConfig
   ) {
     this.game = game;
+
+    this.id = id;
 
     this.sprite = this.game.physics.add.sprite(x, y, spriteConfig.name);
     this.sprite.setScale(spriteConfig.scale);
@@ -25,6 +29,11 @@ export class Unit {
 
   dead() {
     // TODO Marinkov play dead animation + destroy
+    this.destroy();
+  }
+
+  destroy() {
+    this.sprite.destroy();
   }
 
   goto(x: number, y: number): void {

@@ -71,10 +71,13 @@ export class Pair {
     this.hand.destroy();
   };
 
-  split(): Bot[] {
+  split(): [number, number] {
     this.playSplitAnimation();
 
-    return []; // TODO fix this
+    this.unit1.destroy();
+    this.unit2.destroy();
+
+    return [this.unit1.id, this.unit2.id];
   }
 
   maybeSplitHand = (): boolean => {
