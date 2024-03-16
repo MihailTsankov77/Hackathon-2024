@@ -20,7 +20,7 @@ export class Bot {
   constructor(
     dataPlayer1: PlayerData,
     dataPlayer2: PlayerData | undefined,
-    game: Phaser.Scene
+    game: Phaser.Scene,
   ) {
     this.game = game;
 
@@ -38,7 +38,7 @@ export class Bot {
       {
         name: "slavi",
         scale: 0.5,
-      }
+      },
     );
 
     if (!this.dataPlayer2) {
@@ -53,7 +53,7 @@ export class Bot {
       {
         name: "slavi",
         scale: 0.5,
-      }
+      },
     );
 
     this.pair = new Pair(this.unit1, this.unit2, this.game);
@@ -62,11 +62,21 @@ export class Bot {
   updateData = (dataPlayer1: PlayerData, dataPlayer2?: PlayerData) => {
     this.dataPlayer1 = dataPlayer1;
     this.dataPlayer2 = dataPlayer2;
-    this.unit1.goto(dataPlayer1.x, dataPlayer1.y, dataPlayer1.points,dataPlayer1.cooldown);
+    this.unit1.goto(
+      dataPlayer1.x,
+      dataPlayer1.y,
+      dataPlayer1.points,
+      dataPlayer1.cooldown,
+    );
 
     if (this.unit2 && dataPlayer2) {
       //console.log(dataPlayer2.points);
-      this.unit2.goto(dataPlayer2.x, dataPlayer2.y, dataPlayer2.points,dataPlayer2.cooldown);
+      this.unit2.goto(
+        dataPlayer2.x,
+        dataPlayer2.y,
+        dataPlayer2.points,
+        dataPlayer2.cooldown,
+      );
     }
   };
 
@@ -94,17 +104,18 @@ export class Bot {
     this.collideFunction = () => {
       collide(this.getIds(), playerGroup.getIds());
     };
+    console.log(playerGroup);
     this.game.physics.add.collider(
       playerGroup.player.unit.sprite,
       this.unit1.sprite,
-      this.collideFunction
+      this.collideFunction,
     );
 
     if (this.unit2) {
       this.game.physics.add.collider(
         playerGroup.player.unit.sprite,
         this.unit2.sprite,
-        this.collideFunction
+        this.collideFunction,
       );
     }
 
@@ -112,14 +123,14 @@ export class Bot {
       this.game.physics.add.collider(
         playerGroup.unit2.sprite,
         this.unit1.sprite,
-        this.collideFunction
+        this.collideFunction,
       );
 
       if (this.unit2) {
         this.game.physics.add.collider(
           playerGroup.unit2.sprite,
           this.unit2.sprite,
-          this.collideFunction
+          this.collideFunction,
         );
       }
     }

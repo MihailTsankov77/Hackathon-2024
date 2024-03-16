@@ -4,6 +4,7 @@ import { Bot } from "../players/units/Bot";
 import { SocketConnection } from "../connection/connectionMain";
 import { PlayerGroup } from "../players/player/PlayerGroup";
 import { Timer } from "../players/units/Timer";
+import { Player } from "../players/player/Player";
 
 export type CollideFun = (group1: number[], group2: number[]) => void;
 
@@ -113,7 +114,7 @@ export default class MainScene extends Phaser.Scene {
       0,
       this.gameWidth,
       this.gameHeight,
-      "background"
+      "background",
     );
     background.setOrigin(0, 0);
 
@@ -127,8 +128,11 @@ export default class MainScene extends Phaser.Scene {
 
   create() {
     this.setUpCameraAndBackground();
-    this.timer = new Timer(this.cameras.main.scrollX, this.cameras.main.scrollY, this);
-    this.updateData();
+    this.timer = new Timer(
+      this.cameras.main.scrollX,
+      this.cameras.main.scrollY,
+      this,
+    );
 
     this.playerGroup = new PlayerGroup(
       {
@@ -138,7 +142,7 @@ export default class MainScene extends Phaser.Scene {
         points: 0,
         cooldown: 0,
       },
-      this
+      this,
     );
 
     this.updateData();
@@ -178,7 +182,7 @@ export default class MainScene extends Phaser.Scene {
 
   killPlayers() {
     const toBeKilled = Object.keys(this.botsByIds).filter((id) =>
-      this.pairs.every((pair) => id !== this.getPairId(pair))
+      this.pairs.every((pair) => id !== this.getPairId(pair)),
     );
 
     let addIds: number[] = [];
@@ -212,6 +216,7 @@ export default class MainScene extends Phaser.Scene {
     const plData1 = this.playersData[ids[0]];
     const plData2 = ids.length > 1 ? this.playersData[ids[1]] : undefined;
 
+    console.log(this.playerGroup);
     if (this.botsByIds[id]) {
       this.botsByIds[id].updateData(plData1, plData2);
     } else {
@@ -221,18 +226,23 @@ export default class MainScene extends Phaser.Scene {
         this.playerGroup,
         (groupOne: number[], groupTwo: number[]) => {
           console.log(groupOne, groupTwo);
-        }
+        },
       );
     }
   }
 
   update() {
     this.playerGroup.update(this.socket);
-    this.timer.timeText.setPosition(this.cameras.main.scrollX - 500, this.cameras.main.scrollY - 500);
-    console.log(this.timer.timeText.getBounds())
+    this.timer.timeText.setPosition(
+      this.cameras.main.scrollX - 500,
+      this.cameras.main.scrollY - 500,
+    );
+
+    this.timer.timeText.update();
+    console.log(this.timer.timeText.getBounds());
 
     Object.values(this.botsByIds).forEach((bot) =>
-      bot.update(this.playerGroup)
+      bot.update(this.playerGroup),
     );
 
     // this.pairs = this.pairs.filter((pair) => !pair.maybeSplitHand());
