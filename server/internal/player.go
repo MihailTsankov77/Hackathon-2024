@@ -6,6 +6,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/gorilla/websocket"
 	"golang.org/x/exp/maps"
@@ -24,35 +25,47 @@ type Battle struct {
 	Losers  []int `json:"losers"`
 }
 
+type SafePlayers struct {
+	Values map[int]Player
+	mutex  sync.Mutex
+}
+
 var playerIdCounter = 0
 
-var players map[int]Player = make(map[int]Player)
+var players = SafePlayers{
+	Values: make(map[int]Player),
+}
 
 var playerConnections [][]int
 
 func connectPlayer(player1, player2 Player) {
-	player1.Cooldown = 10
+	points := player1.Points + player2.Points
 
-	players[player1.Id] = player1
+	player1.Points = points / 2
+	player2.Points = points / 2
+
+	player1.Cooldown = 10
 
 	player2.Cooldown = 10
 
-	players[player2.Id] = player2
+	players.Values[player1.Id] = player1
+
+	players.Values[player2.Id] = player2
 
 	playerConnections = append(playerConnections, []int{player1.Id, player2.Id})
 }
 
 func updatePlayers() {
-	for _, player := range players {
+	for _, player := range players.Values {
 		if player.Cooldown > 0 {
 			player.Cooldown--
 		}
 		if isPlayerSolo(player) {
 			player.Points += 4
-			players[player.Id] = player
+			players.Values[player.Id] = player
 		} else {
 			player.Points += 2
-			players[player.Id] = player
+			players.Values[player.Id] = player
 		}
 	}
 }
@@ -76,9 +89,11 @@ type ByPoints []Player
 func (a ByPoints) Len() int {
 	return len(a)
 }
+
 func (a ByPoints) Less(i, j int) bool {
 	return a[i].Points > a[j].Points
 }
+
 func (a ByPoints) Swap(i, j int) {
 	a[i], a[j] = a[j], a[i]
 }
@@ -88,8 +103,8 @@ func leaderboardUpdate(players []Player) []Player {
 	copy(sorted, players)
 	sort.Sort(ByPoints(sorted))
 	return sorted
-
 }
+
 func handleCommands(conn *websocket.Conn, message []byte) {
 	cmd := strings.SplitN(string(message), " ", 2)
 	if cmd[0] == "join" {
@@ -115,8 +130,8 @@ func handleCommands(conn *websocket.Conn, message []byte) {
 		}
 		playerIdCounter++
 
-		players[player.Id] = player
-		fmt.Println("Number of players:", len(players))
+		players.Values[player.Id] = player
+		fmt.Println("Number of players:", len(players.Values))
 		Manager.Clients[conn] = player.Id
 		err = conn.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("id %d", player.Id)))
 		if err != nil {
@@ -139,14 +154,16 @@ func handleCommands(conn *websocket.Conn, message []byte) {
 			return
 		}
 
-		if !(players[playerId].X == pX && players[playerId].Y == pY) {
+		players.mutex.Lock()
+		if !(players.Values[playerId].X == pX && players.Values[playerId].Y == pY) {
 
-			player := players[playerId]
+			player := players.Values[playerId]
 			player.X = pX
 			player.Y = pY
 
-			players[playerId] = player
+			players.Values[playerId] = player
 		}
+		players.mutex.Unlock()
 
 	} else if cmd[0] == "collision" {
 		battle := Battle{}
@@ -158,19 +175,19 @@ func handleCommands(conn *websocket.Conn, message []byte) {
 
 		loserPoints := 0
 		if len(battle.Losers) == 1 {
-			loserPoints = players[battle.Losers[0]].Points
+			loserPoints = players.Values[battle.Losers[0]].Points
 			killPlayer(battle.Losers[0])
 		} else {
 			origLoserPoints := 0
 			for _, loserId := range battle.Losers {
-				origLoserPoints += players[loserId].Points
+				origLoserPoints += players.Values[loserId].Points
 			}
 			loserPoints = int(float64(origLoserPoints) * (2.0 / 5.0))
 			for _, loserId := range battle.Losers {
-				players[loserId] = Player{
-					Id:     players[loserId].Id,
-					X:      players[loserId].X,
-					Y:      players[loserId].Y,
+				players.Values[loserId] = Player{
+					Id:     players.Values[loserId].Id,
+					X:      players.Values[loserId].X,
+					Y:      players.Values[loserId].Y,
 					Points: (origLoserPoints - loserPoints) / 2,
 				}
 				for i, v := range playerConnections {
@@ -182,20 +199,20 @@ func handleCommands(conn *websocket.Conn, message []byte) {
 		}
 
 		if len(battle.Winners) == 1 {
-			players[battle.Winners[0]] = Player{
-				Id:       players[battle.Winners[0]].Id,
-				X:        players[battle.Winners[0]].X,
-				Y:        players[battle.Winners[0]].Y,
-				Points:   players[battle.Winners[0]].Points + loserPoints,
+			players.Values[battle.Winners[0]] = Player{
+				Id:       players.Values[battle.Winners[0]].Id,
+				X:        players.Values[battle.Winners[0]].X,
+				Y:        players.Values[battle.Winners[0]].Y,
+				Points:   players.Values[battle.Winners[0]].Points + loserPoints,
 				Cooldown: 0,
 			}
 		} else {
 			for _, winnerId := range battle.Winners {
-				players[winnerId] = Player{
-					Id:       players[battle.Winners[0]].Id,
-					X:        players[battle.Winners[0]].X,
-					Y:        players[battle.Winners[0]].Y,
-					Points:   players[battle.Winners[0]].Points + (loserPoints / 2),
+				players.Values[winnerId] = Player{
+					Id:       players.Values[battle.Winners[0]].Id,
+					X:        players.Values[battle.Winners[0]].X,
+					Y:        players.Values[battle.Winners[0]].Y,
+					Points:   players.Values[battle.Winners[0]].Points + (loserPoints / 2),
 					Cooldown: 0,
 				}
 			}
@@ -212,7 +229,7 @@ func handleCommands(conn *websocket.Conn, message []byte) {
 			fmt.Println("Failed to convert player id:", err)
 			return
 		}
-		connectPlayer(players[playerId1], players[playerId2])
+		connectPlayer(players.Values[playerId1], players.Values[playerId2])
 
 	} else if cmd[0] == "disconnect" {
 		data := strings.Split(cmd[1], " ")
@@ -241,24 +258,24 @@ func handleCommands(conn *websocket.Conn, message []byte) {
 		}
 
 		if !isMutual {
-			players[playerId1] = Player{
-				Id:       players[playerId1].Id,
-				X:        players[playerId1].X,
-				Y:        players[playerId1].Y,
-				Points:   players[playerId1].Points + int(float64(players[playerId1].Points)*(1.0/5.0)),
+			players.Values[playerId1] = Player{
+				Id:       players.Values[playerId1].Id,
+				X:        players.Values[playerId1].X,
+				Y:        players.Values[playerId1].Y,
+				Points:   players.Values[playerId1].Points + int(float64(players.Values[playerId1].Points)*(1.0/5.0)),
 				Cooldown: 60,
 			}
 
-			players[playerId2] = Player{
-				Id:       players[playerId2].Id,
-				X:        players[playerId2].X,
-				Y:        players[playerId2].Y,
-				Points:   players[playerId2].Points - int(float64(players[playerId2].Points)*(1.0/5.0)),
+			players.Values[playerId2] = Player{
+				Id:       players.Values[playerId2].Id,
+				X:        players.Values[playerId2].X,
+				Y:        players.Values[playerId2].Y,
+				Points:   players.Values[playerId2].Points - int(float64(players.Values[playerId2].Points)*(1.0/5.0)),
 				Cooldown: 0,
 			}
 		}
 	} else if cmd[0] == "leaderboard" {
-		sortedLeaderboard := maps.Values(players)
+		sortedLeaderboard := maps.Values(players.Values)
 		sortedLeaderboard = leaderboardUpdate(sortedLeaderboard)
 
 		jsonRes, err := json.Marshal(sortedLeaderboard)
