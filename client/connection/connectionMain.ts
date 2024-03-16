@@ -76,4 +76,8 @@ export class SocketConnection {
   update(x: number, y: number) {
     this.sendLocation(x, y);
   }
+
+  connect(id1: number, id2: number) {
+    this.socket.send(`connect ${id1} ${id2}`);
+  }
 }

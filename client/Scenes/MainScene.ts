@@ -15,7 +15,7 @@ export type PlayerData = {
   cooldown: number;
 };
 
-const mock = true;
+const mock = false;
 
 const MockPos: Record<number, PlayerData> = {
   1: {
@@ -40,14 +40,14 @@ const MockPos: Record<number, PlayerData> = {
     cooldown: 0,
   },
   0: {
-    id: 3,
+    id: 0,
     x: 1000,
     y: 1000,
     points: 0,
     cooldown: 0,
   },
   6: {
-    id: 3,
+    id: 6,
     x: 799,
     y: 800,
     points: 0,
@@ -55,7 +55,7 @@ const MockPos: Record<number, PlayerData> = {
   },
 };
 
-const MockPair = [[1, 2], [3, 0], [6]];
+const MockPair = [[1, 2], [3], [6]];
 
 export default class MainScene extends Phaser.Scene {
   playerGroup: PlayerGroup;
@@ -67,7 +67,6 @@ export default class MainScene extends Phaser.Scene {
   playerY = 0;
   playerId = 0;
 
-  // playerPair: Bot;
   botsByIds: Record<string, Bot> = {};
 
   pairs: number[][] = mock ? MockPair : [];
@@ -146,6 +145,8 @@ export default class MainScene extends Phaser.Scene {
 
     // this.timer.timeText.setOrigin(0.5, 0.5);
     this.timer.timeText.setScrollFactor(0);
+
+    this.addListener();
   }
 
   handleMessage = (rawData: string) => {
@@ -259,13 +260,58 @@ export default class MainScene extends Phaser.Scene {
     }
   };
 
+  addListener() {
+    if (!this.input.keyboard) {
+      return;
+    }
+
+    const spaceBar = this.input.keyboard.addKey(
+      Phaser.Input.Keyboard.KeyCodes.SPACE
+    );
+
+    spaceBar.on("down", () => {
+      if (this.playerGroup.pair) {
+        return;
+      }
+
+      this.socket.connect(this.playerGroup.player.unit.id, this.getClosest());
+    });
+  }
+
+  getClosest = (): number => {
+    const arr = Object.values(this.botsByIds)
+      .filter((bot) => !bot.pair)
+      .map((bot) => ({
+        id: bot.unit1.id,
+        distance: getDistance(
+          bot.unit1.sprite,
+          this.playerGroup.player.unit.sprite
+        ),
+      }));
+
+    let minIndex = 0;
+
+    for (let index = 1; index < arr.length; index++) {
+      const element = arr[index];
+
+      if (element.distance < arr[minIndex].distance) {
+        minIndex = index;
+      }
+    }
+
+    return arr[minIndex].id;
+  };
+
   update() {
     this.playerGroup.update(this.socket);
 
     Object.values(this.botsByIds).forEach((bot) =>
       bot.update(this.playerGroup)
     );
-
-    // this.pairs = this.pairs.filter((pair) => !pair.maybeSplitHand());
   }
+}
+
+type Point = { x: number; y: number };
+function getDistance(p1: Point, p2: Point) {
+  return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
 }
