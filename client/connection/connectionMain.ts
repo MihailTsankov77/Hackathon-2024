@@ -13,7 +13,7 @@ export class SocketConnection {
   socket: WebSocket;
   debug = false;
 
-  online = true;
+  online = false;
   bojo = "10.108.5.150";
 
   constructor(x: number, y: number) {
@@ -79,5 +79,9 @@ export class SocketConnection {
 
   connect(id1: number, id2: number) {
     this.socket.send(`connect ${id1} ${id2}`);
+  }
+
+  sendDisconnect(id1: number, id2: number, isMutual: boolean) {
+    this.socket.send(`disconnect ${id1} ${id2} ${isMutual}`);
   }
 }

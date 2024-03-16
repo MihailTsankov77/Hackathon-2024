@@ -15,7 +15,7 @@ export type PlayerData = {
   cooldown: number;
 };
 
-const mock = false;
+const mock = true;
 
 const MockPos: Record<number, PlayerData> = {
   1: {
@@ -271,6 +271,13 @@ export default class MainScene extends Phaser.Scene {
 
     spaceBar.on("down", () => {
       if (this.playerGroup.pair) {
+        this.playerGroup.pair?.playSplitAnimation();
+
+        this.socket.sendDisconnect(
+          this.playerGroup.player.unit.id,
+          this.playerGroup.unit2?.id ?? 0,
+          false
+        );
         return;
       }
 
