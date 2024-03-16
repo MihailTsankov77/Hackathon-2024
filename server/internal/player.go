@@ -118,13 +118,15 @@ func handleCommands(conn *websocket.Conn, message []byte) {
 			return
 		}
 
-		players[playerId] = Player{
-			Id:       players[playerId].Id,
-			X:        pX,
-			Y:        pY,
-			Points:   players[playerId].Points,
-			Cooldown: players[playerId].Cooldown,
+		if !(players[playerId].X == pX && players[playerId].Y == pY) {
+
+			player := players[playerId]
+			player.X = pX
+			player.Y = pY
+
+			players[playerId] = player
 		}
+
 	} else if cmd[0] == "collision" {
 		battle := Battle{}
 		err := json.Unmarshal([]byte(cmd[1]), &battle)
