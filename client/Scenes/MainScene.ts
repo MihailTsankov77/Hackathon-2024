@@ -4,6 +4,7 @@ import { Player } from "../players/player/Player";
 import { Unit } from "../players/units/Unit";
 import { Pair } from "../players/units/Pair";
 import { Bot } from "../players/units/Bot";
+import { SocketConnection } from "../connection/connectionMain";
 
 // TODO move
 
@@ -44,6 +45,8 @@ export default class MainScene extends Phaser.Scene {
   // playerPair: Bot;
   botsByIds: Record<string, Bot> = {};
 
+  socket: SocketConnection= new SocketConnection();
+
   constructor() {
     super("MainScene");
   }
@@ -53,6 +56,8 @@ export default class MainScene extends Phaser.Scene {
   preload() {
     preloadImages(this);
   }
+
+  
 
   setUpCameraAndBackground() {
     this.cameras.main.setBounds(0, 0, this.gameWidth, this.gameHeight);
