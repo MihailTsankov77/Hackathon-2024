@@ -173,8 +173,10 @@ export class Pair {
     }
 
     this.playSplitAnimation();
-
+    this.unit1.SPEED -=10;
+    this.unit2.SPEED -=10;
     socket.sendDisconnect(this.unit1.id, this.unit2.id, true);
+
     return;
   };
 }
