@@ -85,7 +85,7 @@ func handleCommands(conn *websocket.Conn, message []byte) {
 		players[player.Id] = player
 		fmt.Println("Number of players:", len(players))
 		Manager.Clients[conn] = player.Id
-		err = conn.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("%d", player.Id)))
+		err = conn.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("id %d", player.Id)))
 		if err != nil {
 			fmt.Println("Failed to write message:", err)
 		}
