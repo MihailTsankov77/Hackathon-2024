@@ -113,7 +113,7 @@ func handleCommands(conn *websocket.Conn, message []byte) {
 			Points:   players[playerId].Points,
 			Cooldown: players[playerId].Cooldown,
 		}
-	} else if cmd[0] == "win" {
+	} else if cmd[0] == "collision" {
 		battle := Battle{}
 		err := json.Unmarshal([]byte(cmd[1]), &battle)
 		if err != nil {
