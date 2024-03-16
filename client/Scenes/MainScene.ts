@@ -5,7 +5,7 @@ import { SocketConnection } from "../connection/connectionMain";
 import { PlayerGroup } from "../players/player/PlayerGroup";
 import { Timer } from "../players/units/Timer";
 
-// TODO move
+export type CollideFun = (group1: number[], group2: number[]) => void;
 
 export type PlayerData = {
   id: number;
@@ -15,6 +15,48 @@ export type PlayerData = {
   cooldown: number;
 };
 
+const mock = true;
+
+const MockPos: Record<number, PlayerData> = {
+  1: {
+    id: 1,
+    x: 200,
+    y: 200,
+    points: 0,
+    cooldown: 0,
+  },
+  2: {
+    id: 2,
+    x: 500,
+    y: 500,
+    points: 0,
+    cooldown: 0,
+  },
+  3: {
+    id: 3,
+    x: 1000,
+    y: 1000,
+    points: 0,
+    cooldown: 0,
+  },
+  4: {
+    id: 3,
+    x: 1000,
+    y: 1000,
+    points: 0,
+    cooldown: 0,
+  },
+  6: {
+    id: 3,
+    x: 799,
+    y: 800,
+    points: 0,
+    cooldown: 0,
+  },
+};
+
+const MockPair = [[1, 2], [3, 4], [6]];
+
 export default class MainScene extends Phaser.Scene {
   playerGroup: PlayerGroup;
 
@@ -23,13 +65,13 @@ export default class MainScene extends Phaser.Scene {
 
   playerX = 0;
   playerY = 0;
-  playerId = -1;
+  playerId = 4;
 
   // playerPair: Bot;
   botsByIds: Record<string, Bot> = {};
 
-  pairs: number[][] = [];
-  playersData: Record<number, PlayerData> = {};
+  pairs: number[][] = mock ? MockPair : [];
+  playersData: Record<number, PlayerData> = mock ? MockPos : {};
 
   socket: SocketConnection;
 
@@ -37,8 +79,8 @@ export default class MainScene extends Phaser.Scene {
 
   constructor() {
     super("MainScene");
-    this.playerX = this.getRandomWidth();
-    this.playerY = this.getRandomHight();
+    this.playerX = mock ? 800 : this.getRandomWidth();
+    this.playerY = mock ? 500 : this.getRandomHight();
   }
 
   init() {}
@@ -99,6 +141,8 @@ export default class MainScene extends Phaser.Scene {
       this
     );
 
+    this.updateData();
+
     this.joinServer();
   }
 
@@ -148,8 +192,11 @@ export default class MainScene extends Phaser.Scene {
   }
 
   handlePLayer(ids: number[]) {
-    const plData1 = this.playersData[ids[0]];
-    const plData2 = ids.length > 1 ? this.playersData[ids[1]] : undefined;
+    const plData1 = this.playersData[this.playerId];
+    const plData2 =
+      ids.length > 1
+        ? this.playersData[ids.filter((id) => id !== this.playerId)[0]]
+        : undefined;
 
     this.playerGroup.updateData(plData1, plData2);
   }
@@ -169,6 +216,13 @@ export default class MainScene extends Phaser.Scene {
       this.botsByIds[id].updateData(plData1, plData2);
     } else {
       this.botsByIds[id] = new Bot(plData1, plData2, this);
+
+      this.botsByIds[id].addCollisionWithAPlayer(
+        this.playerGroup,
+        (groupOne: number[], groupTwo: number[]) => {
+          console.log(groupOne, groupTwo);
+        }
+      );
     }
   }
 
@@ -177,7 +231,9 @@ export default class MainScene extends Phaser.Scene {
     this.timer.timeText.setPosition(this.cameras.main.scrollX - 500, this.cameras.main.scrollY - 500);
     console.log(this.timer.timeText.getBounds())
 
-    Object.values(this.botsByIds).forEach((bot) => bot.update());
+    Object.values(this.botsByIds).forEach((bot) =>
+      bot.update(this.playerGroup)
+    );
 
     // this.pairs = this.pairs.filter((pair) => !pair.maybeSplitHand());
   }

@@ -39,14 +39,11 @@ export class PlayerGroup {
         this.unit2.goto(plData2.x, plData2.y, plData2.points,plData2.cooldown);
       }
     } else {
-      // TODO kill group or ddz
+      this.pair?.playSplitAnimation();
+      this.unit2 = undefined;
+      this.pair = undefined;
     }
   }
-
-  onKill = (): number[] => {
-    // TODO
-    return [];
-  };
 
   update(socket: SocketConnection) {
     this.player.update(socket, this.score,this.cooldown);
@@ -54,5 +51,13 @@ export class PlayerGroup {
     if (this.pair) {
       this.pair.update();
     }
+  }
+
+  getIds() {
+    if (this.unit2) {
+      return [this.player.unit.id, this.unit2?.id];
+    }
+
+    return [this.player.unit.id];
   }
 }
