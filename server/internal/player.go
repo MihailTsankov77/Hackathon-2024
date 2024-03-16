@@ -58,15 +58,16 @@ func isPlayerDead(player Player) bool {
 }
 
 func handleCommands(conn *websocket.Conn, message []byte) {
-	cmd := strings.Split(string(message), " ")
+	cmd := strings.SplitN(string(message), " ", 2)
 	if cmd[0] == "join" {
-		pX, err := strconv.ParseFloat(cmd[1], 64)
+		data := strings.Split(cmd[1], " ")
+		pX, err := strconv.ParseFloat(data[0], 64)
 		if err != nil {
 			fmt.Println("Failed to convert position:", err)
 			return
 		}
 
-		pY, err := strconv.ParseFloat(cmd[2], 64)
+		pY, err := strconv.ParseFloat(data[1], 64)
 		if err != nil {
 			fmt.Println("Failed to convert position:", err)
 			return
@@ -89,19 +90,17 @@ func handleCommands(conn *websocket.Conn, message []byte) {
 			fmt.Println("Failed to write message:", err)
 		}
 	} else if cmd[0] == "move" {
-		playerId, err := strconv.Atoi(cmd[1])
-		if err != nil {
-			fmt.Println("Failed to convert player id:", err)
-			return
-		}
+		data := strings.Split(cmd[1], " ")
 
-		pX, err := strconv.ParseFloat(cmd[2], 64)
+		playerId := Manager.Clients[conn]
+
+		pX, err := strconv.ParseFloat(data[0], 64)
 		if err != nil {
 			fmt.Println("Failed to convert position:", err)
 			return
 		}
 
-		pY, err := strconv.ParseFloat(cmd[3], 64)
+		pY, err := strconv.ParseFloat(data[1], 64)
 		if err != nil {
 			fmt.Println("Failed to convert position:", err)
 			return
@@ -115,11 +114,7 @@ func handleCommands(conn *websocket.Conn, message []byte) {
 			Cooldown: players[playerId].Cooldown,
 		}
 	} else if cmd[0] == "quit" {
-		playerId, err := strconv.Atoi(cmd[1])
-		if err != nil {
-			fmt.Println("Failed to convert player id:", err)
-			return
-		}
+		playerId := Manager.Clients[conn]
 
 		delete(players, playerId)
 		Manager.Unregister <- conn
