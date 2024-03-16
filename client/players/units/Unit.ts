@@ -23,6 +23,10 @@ export class Unit {
     this.sprite.setCollideWorldBounds(true);
   }
 
+  dead() {
+    // TODO Marinkov play dead animation + destroy
+  }
+
   goto(x: number, y: number): void {
     this.game.physics.moveToObject(this.sprite, { x, y }, this.SPEED);
   }

@@ -1,5 +1,7 @@
+import Phaser from "phaser";
 import { Sprite } from "../../utils/types";
 import { Unit } from "./Unit";
+import { Bot } from "./Bot";
 
 export class Pair {
   game: Phaser.Scene;
@@ -62,20 +64,26 @@ export class Pair {
 
   playSplitAnimation = () => {
     // TODO Marinkov
+    this.destroyHand();
   };
 
-  destroyHand = (): void =>{
+  destroyHand = (): void => {
     this.hand.destroy();
   };
 
+  split(): Bot[] {
+    this.playSplitAnimation();
+
+    return []; // TODO fix this
+  }
+
   maybeSplitHand = (): boolean => {
+    // TODO this method is only for the player pair
     if (this.getDistance() < this.MaxDistance) {
       return false;
     }
 
     this.playSplitAnimation();
-
-    this.destroyHand();
 
     return true;
   };
