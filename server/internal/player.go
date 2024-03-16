@@ -113,11 +113,6 @@ func handleCommands(conn *websocket.Conn, message []byte) {
 			Points:   players[playerId].Points,
 			Cooldown: players[playerId].Cooldown,
 		}
-	} else if cmd[0] == "quit" {
-		playerId := Manager.Clients[conn]
-
-		delete(players, playerId)
-		Manager.Unregister <- conn
 	} else if cmd[0] == "win" {
 		battle := Battle{}
 		err := json.Unmarshal([]byte(cmd[1]), &battle)
@@ -180,8 +175,8 @@ func killPlayer(id int) {
 			err := client.WriteMessage(websocket.TextMessage, []byte("die"))
 			if err != nil {
 				fmt.Println("Failed to write message:", err)
+				return
 			}
-			Manager.Unregister <- client
 		}
 	}
 }
