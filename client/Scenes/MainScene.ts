@@ -166,6 +166,10 @@ export default class MainScene extends Phaser.Scene {
 
         break;
       }
+      case "die": {
+        this.playerGroup.player.dead();
+        this.socket.disconnect();
+      }
     }
   };
 

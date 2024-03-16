@@ -56,6 +56,10 @@ export class SocketConnection {
     }
   }
 
+  disconnect() {
+    this.socket.close();
+  }
+
   setMessageHandle(messageHandle: (a: string) => void) {
     this.socket.onmessage = (event) => {
       messageHandle(event.data);
