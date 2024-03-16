@@ -48,7 +48,7 @@ export class Unit {
     this.game.physics.moveToObject(this.sprite, { x, y }, this.SPEED);
     //this.game.physics.moveToObject(this.score.digitsSprite, { x, y:y-60 }, this.SPEED);
     //this.game.physics.moveToObject(this.score.digitsText,{ x, y:y-60 }, this.SPEED);
-    //this.timer.timeText.setPosition(window.innerHeight, 0);
+    
     this.timer.update(newTimer);
     this.score.digitsText.setPosition(this.sprite.x-17,this.sprite.y-100);
     this.score.update(newScore);
