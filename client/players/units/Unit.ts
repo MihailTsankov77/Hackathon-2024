@@ -41,11 +41,14 @@ export class Unit {
     this.sprite.destroy();
   }
 
-  goto(x: number, y: number): void {
+  //equvalent of update
+  goto(x: number, y: number,newScore:number): void {
     this.game.physics.moveToObject(this.sprite, { x, y }, this.SPEED);
     //this.game.physics.moveToObject(this.score.digitsSprite, { x, y:y-60 }, this.SPEED);
     //this.game.physics.moveToObject(this.score.digitsText,{ x, y:y-60 }, this.SPEED);
     this.score.digitsText.setPosition(this.sprite.x-17,this.sprite.y-100);
+    this.score.update(newScore);
+    //console.log("Hi");
   }
 
 

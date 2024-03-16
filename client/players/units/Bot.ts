@@ -56,13 +56,17 @@ export class Bot {
     this.pair = new Pair(this.unit1, this.unit2, this.game);
   }
 
-  updateData = (dataPlayer1: PlayerData, dataPlayer2?: PlayerData) => {
+  updateData = (dataPlayer1: PlayerData, dataPlayer2?: PlayerData) => { 
     this.dataPlayer1 = dataPlayer1;
     this.dataPlayer2 = dataPlayer2;
-    this.unit1.goto(dataPlayer1.x, dataPlayer1.y);
+    //console.log(dataPlayer1.points);
+    this.unit1.goto(dataPlayer1.x, dataPlayer1.y,dataPlayer1.points);
+    
 //Marti
+
     if (this.unit2 && dataPlayer2) {
-      this.unit2.goto(dataPlayer2.x, dataPlayer2.y);
+      //console.log(dataPlayer2.points);
+      this.unit2.goto(dataPlayer2.x, dataPlayer2.y,dataPlayer2.points);
     }
   };
 

@@ -10,7 +10,7 @@ export type PlayerData = {
   id: number;
   x: number;
   y: number;
-  score: number;
+  points: number;
   // delay: number
 };
 
