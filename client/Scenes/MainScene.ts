@@ -50,6 +50,8 @@ export default class MainScene extends Phaser.Scene {
   gameWidth = 2000;
   gameHeight = 2000;
 
+  playerId = 0;
+
   // playerPair: Bot;
   botsByIds: Record<string, Bot> = {};
 
@@ -85,7 +87,7 @@ export default class MainScene extends Phaser.Scene {
 
     this.updateData();
 
-    this.player = new Player(500, 500, this);
+    this.player = new Player(this.playerId, 500, 500, this);
   }
 
   updateData() {
