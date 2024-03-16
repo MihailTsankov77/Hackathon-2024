@@ -11,7 +11,8 @@ export class Player {
   constructor(x: number, y: number, game: Phaser.Scene) {
     this.game = game;
 
-    this.unit = new Unit(x, y, game, {
+    // TODO ADD ID
+    this.unit = new Unit(-1, x, y, game, {
       name: "player",
       scale: 1,
     });

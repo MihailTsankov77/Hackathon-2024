@@ -1,8 +1,6 @@
 import Phaser from "phaser";
 import { preloadImages } from "../utils/images";
 import { Player } from "../players/player/Player";
-import { Unit } from "../players/units/Unit";
-import { Pair } from "../players/units/Pair";
 import { Bot } from "../players/units/Bot";
 import { SocketConnection } from "../connection/connectionMain";
 
@@ -32,9 +30,19 @@ const MockPos: Record<number, PlayerData> = {
     x: 1000,
     y: 1000,
   },
+  4: {
+    id: 4,
+    x: 700,
+    y: 400,
+  },
+  5: {
+    id: 5,
+    x: 700,
+    y: 700,
+  },
 };
 
-const MockPair = [[1, 2], [3]];
+const MockPair = [[1, 2], [3], [4, 5]];
 
 export default class MainScene extends Phaser.Scene {
   player: Player;
@@ -45,7 +53,7 @@ export default class MainScene extends Phaser.Scene {
   // playerPair: Bot;
   botsByIds: Record<string, Bot> = {};
 
-  socket: SocketConnection= new SocketConnection();
+  socket: SocketConnection = new SocketConnection();
 
   constructor() {
     super("MainScene");
@@ -56,8 +64,6 @@ export default class MainScene extends Phaser.Scene {
   preload() {
     preloadImages(this);
   }
-
-  
 
   setUpCameraAndBackground() {
     this.cameras.main.setBounds(0, 0, this.gameWidth, this.gameHeight);
@@ -83,12 +89,27 @@ export default class MainScene extends Phaser.Scene {
   }
 
   updateData() {
-    // TODO kill
+    this.killPlayers();
     MockPair.forEach((pair) => this.usePair(pair));
   }
 
   getPairId(ids: number[]) {
     return `${ids[0]}-${ids[1] ?? ""}`;
+  }
+
+  killPlayers() {
+    const toBeKilled = Object.keys(this.botsByIds).filter((id) =>
+      MockPair.every((pair) => id !== this.getPairId(pair))
+    );
+
+    let addIds: number[] = [];
+    toBeKilled.forEach((id) => {
+      addIds = addIds.concat(this.botsByIds[id].onKill());
+
+      delete this.botsByIds[id];
+    });
+
+    addIds.forEach((id) => this.usePair([id]));
   }
 
   usePair(ids: number[]) {
@@ -106,6 +127,7 @@ export default class MainScene extends Phaser.Scene {
 
   update() {
     this.player.update(this.socket);
+    this.updateData();
 
     Object.values(this.botsByIds).forEach((bot) => bot.update());
 

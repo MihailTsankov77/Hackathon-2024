@@ -27,19 +27,31 @@ export class Bot {
   }
 
   createUnits() {
-    this.unit1 = new Unit(this.dataPlayer1.x, this.dataPlayer1.y, this.game, {
-      name: "slavi",
-      scale: 0.5,
-    });
+    this.unit1 = new Unit(
+      this.dataPlayer1.id,
+      this.dataPlayer1.x,
+      this.dataPlayer1.y,
+      this.game,
+      {
+        name: "slavi",
+        scale: 0.5,
+      }
+    );
 
     if (!this.dataPlayer2) {
       return;
     }
 
-    this.unit2 = new Unit(this.dataPlayer2.x, this.dataPlayer2.y, this.game, {
-      name: "slavi",
-      scale: 0.5,
-    });
+    this.unit2 = new Unit(
+      this.dataPlayer2.id,
+      this.dataPlayer2.x,
+      this.dataPlayer2.y,
+      this.game,
+      {
+        name: "slavi",
+        scale: 0.5,
+      }
+    );
 
     this.pair = new Pair(this.unit1, this.unit2, this.game);
   }
@@ -54,7 +66,7 @@ export class Bot {
     }
   };
 
-  onKill = (): Bot[] => {
+  onKill = (): number[] => {
     if (this.pair) {
       return this.pair.split();
     }
