@@ -134,6 +134,7 @@ export default class MainScene extends Phaser.Scene {
       this,
     );
 
+
     this.playerGroup = new PlayerGroup(
       {
         id: this.playerId,
