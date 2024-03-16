@@ -18,7 +18,7 @@ export class Unit {
     x: number,
     y: number,
     game: Phaser.Scene,
-    spriteConfig: SpriteConfig,
+    spriteConfig: SpriteConfig
   ) {
     this.game = game;
 

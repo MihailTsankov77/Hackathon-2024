@@ -22,7 +22,7 @@ export default class GameOver extends Phaser.Scene {
     const background = this.add.image(
       window.innerWidth / 1.2,
       window.innerHeight,
-      "game-over",
+      "game-over"
     );
     background.setOrigin(1, 1);
   }
