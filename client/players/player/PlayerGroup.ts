@@ -37,14 +37,11 @@ export class PlayerGroup {
         this.unit2.goto(plData2.x, plData2.y, plData2.points);
       }
     } else {
-      // TODO kill group or ddz
+      this.pair?.playSplitAnimation();
+      this.unit2 = undefined;
+      this.pair = undefined;
     }
   }
-
-  onKill = (): number[] => {
-    // TODO
-    return [];
-  };
 
   update(socket: SocketConnection) {
     this.player.update(socket, this.score);

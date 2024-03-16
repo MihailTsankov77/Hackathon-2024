@@ -1,7 +1,31 @@
 import Phaser from "phaser";
 import { Sprite } from "../../utils/types";
 import { Unit } from "./Unit";
-import { Bot } from "./Bot";
+
+type Point = {
+  x: number;
+  y: number;
+};
+
+function isPointBetween(
+  point: Point,
+  point1: Point,
+  point2: Point,
+  offset: number
+) {
+  const distance1 = Math.sqrt(
+    Math.pow(point.x - point1.x, 2) + Math.pow(point.y - point1.y, 2)
+  );
+  const distance2 = Math.sqrt(
+    Math.pow(point.x - point2.x, 2) + Math.pow(point.y - point2.y, 2)
+  );
+
+  const distanceBetweenPoints = Math.sqrt(
+    Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2)
+  );
+
+  return Math.abs(distance1 + distance2 - distanceBetweenPoints) <= offset;
+}
 
 export class Pair {
   game: Phaser.Scene;
@@ -70,6 +94,12 @@ export class Pair {
   destroyHand = (): void => {
     this.hand.destroy();
   };
+
+  checkCollision(collide: () => void, player: Point) {
+    if (isPointBetween(player, this.unit1.sprite, this.unit2.sprite, 20)) {
+      collide();
+    }
+  }
 
   split(): [number, number] {
     this.playSplitAnimation();

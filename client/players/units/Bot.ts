@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import { Unit } from "./Unit";
 import { PlayerData } from "../../Scenes/MainScene";
 import { Pair } from "./Pair";
+import { Player } from "../player/Player";
 
 export class Bot {
   game: Phaser.Scene;
@@ -13,6 +14,8 @@ export class Bot {
   unit2: Unit | undefined;
 
   pair: Pair | undefined;
+
+  collideFunction: () => void;
 
   constructor(
     dataPlayer1: PlayerData,
@@ -76,9 +79,27 @@ export class Bot {
     return [];
   };
 
-  update() {
+  update(player: Player) {
     if (this.pair) {
       this.pair.update();
+      this.pair.checkCollision(this.collideFunction, player.unit.sprite);
+    }
+  }
+
+  addCollisionWithAPlayer(player: Player, collide: () => void) {
+    this.collideFunction = collide;
+    this.game.physics.add.collider(
+      player.unit.sprite,
+      this.unit1.sprite,
+      this.collideFunction
+    );
+
+    if (this.unit2) {
+      this.game.physics.add.collider(
+        player.unit.sprite,
+        this.unit2.sprite,
+        this.collideFunction
+      );
     }
   }
 }
