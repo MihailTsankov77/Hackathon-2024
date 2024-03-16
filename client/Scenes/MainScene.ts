@@ -53,7 +53,7 @@ export default class MainScene extends Phaser.Scene {
   // playerPair: Bot;
   botsByIds: Record<string, Bot> = {};
 
-  socket: SocketConnection= new SocketConnection();
+  socket: SocketConnection = new SocketConnection();
 
   constructor() {
     super("MainScene");
@@ -64,8 +64,6 @@ export default class MainScene extends Phaser.Scene {
   preload() {
     preloadImages(this);
   }
-
-  
 
   setUpCameraAndBackground() {
     this.cameras.main.setBounds(0, 0, this.gameWidth, this.gameHeight);
@@ -88,17 +86,6 @@ export default class MainScene extends Phaser.Scene {
     this.updateData();
 
     this.player = new Player(500, 500, this);
-
-    // TODO test remove delete
-    setTimeout(() => {
-      MockPair.pop();
-      MockPair.push([4]);
-      MockPair.push([5]);
-    }, 1000);
-
-    setTimeout(() => {
-      MockPair.pop();
-    }, 5000);
   }
 
   updateData() {
