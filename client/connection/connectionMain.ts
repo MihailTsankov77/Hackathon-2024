@@ -13,7 +13,7 @@ export class SocketConnection {
   socket: WebSocket;
   debug = false;
 
-  online = false;
+  online = true;
   bojo = "10.108.5.150";
 
   constructor(x: number, y: number) {

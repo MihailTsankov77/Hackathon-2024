@@ -4,7 +4,6 @@ import { Bot } from "../players/units/Bot";
 import { SocketConnection } from "../connection/connectionMain";
 import { PlayerGroup } from "../players/player/PlayerGroup";
 import { Timer } from "../players/units/Timer";
-import { Player } from "../players/player/Player";
 
 export type CollideFun = (group1: number[], group2: number[]) => void;
 
@@ -16,7 +15,7 @@ export type PlayerData = {
   cooldown: number;
 };
 
-const mock = true;
+const mock = false;
 
 const MockPos: Record<number, PlayerData> = {
   1: {
