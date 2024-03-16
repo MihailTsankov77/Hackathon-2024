@@ -10,39 +10,9 @@ export type PlayerData = {
   id: number;
   x: number;
   y: number;
-  score: number
+  score: number;
   // delay: number
 };
-
-const MockPos: Record<number, PlayerData> = {
-  1: {
-    id: 1,
-    x: 200,
-    y: 200,
-  },
-  2: {
-    id: 2,
-    x: 500,
-    y: 500,
-  },
-  3: {
-    id: 3,
-    x: 1000,
-    y: 1000,
-  },
-  4: {
-    id: 4,
-    x: 700,
-    y: 400,
-  },
-  5: {
-    id: 5,
-    x: 700,
-    y: 700,
-  },
-};
-
-const MockPair = [[1, 2], [3], [4, 5]];
 
 export default class MainScene extends Phaser.Scene {
   player: Player;
@@ -50,32 +20,23 @@ export default class MainScene extends Phaser.Scene {
   gameWidth = 2000;
   gameHeight = 2000;
 
-  playerId = 0;
+  playerX = 500;
+  playerY = 500;
+  playerId = -1;
 
   // playerPair: Bot;
   botsByIds: Record<string, Bot> = {};
 
-  socket: SocketConnection = new SocketConnection();
+  pairs: number[][] = [];
+  playersData: Record<number, PlayerData> = {};
+
+  socket: SocketConnection = new SocketConnection(this.playerX, this.playerY);
 
   constructor() {
     super("MainScene");
-
   }
 
-  async joinPlayer(){
-    try{
-      const response = await this.socket.joinSocket(500,500);
-      console.log("Recieved response",response);
-    } catch (error) {
-      console.error('Error sending location:', error);
-    }
-  }
-
-  
-
- async  init() {
-    await this.joinPlayer();
-  }
+  init() {}
 
   preload() {
     preloadImages(this);
@@ -96,17 +57,43 @@ export default class MainScene extends Phaser.Scene {
     this.physics.world.setBounds(0, 0, this.gameWidth, this.gameHeight);
   }
 
+  joinServer() {
+    this.socket = new SocketConnection(this.playerX, this.playerY);
+    this.socket.setMessageHandle(this.handleMessage);
+  }
+
   create() {
     this.setUpCameraAndBackground();
 
     this.updateData();
 
     this.player = new Player(this.playerId, 500, 500, this);
+    this.joinServer();
   }
+
+  handleMessage = (rawData: string) => {
+    const [method, data] = rawData.split(" ");
+
+    switch (method) {
+      case "id": {
+        this.playerId = parseInt(data);
+        this.player.setId(this.playerId);
+        break;
+      }
+      case "heartbeat": {
+        const parsed = JSON.parse(data);
+        this.pairs = parsed.connections;
+        this.playersData = parsed.players;
+        this.updateData();
+
+        break;
+      }
+    }
+  };
 
   updateData() {
     this.killPlayers();
-    MockPair.forEach((pair) => this.usePair(pair));
+    this.pairs.forEach((pair) => this.usePair(pair));
   }
 
   getPairId(ids: number[]) {
@@ -115,7 +102,7 @@ export default class MainScene extends Phaser.Scene {
 
   killPlayers() {
     const toBeKilled = Object.keys(this.botsByIds).filter((id) =>
-      MockPair.every((pair) => id !== this.getPairId(pair))
+      this.pairs.every((pair) => id !== this.getPairId(pair))
     );
 
     let addIds: number[] = [];
@@ -131,8 +118,8 @@ export default class MainScene extends Phaser.Scene {
   usePair(ids: number[]) {
     const id = this.getPairId(ids);
 
-    const plData1 = MockPos[ids[0]];
-    const plData2 = ids.length > 1 ? MockPos[ids[1]] : undefined;
+    const plData1 = this.playersData[ids[0]];
+    const plData2 = ids.length > 1 ? this.playersData[ids[1]] : undefined;
 
     if (this.botsByIds[id]) {
       this.botsByIds[id].updateData(plData1, plData2);
@@ -143,7 +130,6 @@ export default class MainScene extends Phaser.Scene {
 
   update() {
     this.player.update(this.socket);
-    this.updateData();
 
     Object.values(this.botsByIds).forEach((bot) => bot.update());
 

@@ -26,6 +26,10 @@ export class Player {
     alert("YOU DIED // TODO");
   }
 
+  setId(id: number) {
+    this.unit.id = id;
+  }
+
   sendLocation(socket: SocketConnection) {
     socket.sendLocation(this.unit.sprite.x, this.unit.sprite.y);
   }
