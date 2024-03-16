@@ -30,7 +30,7 @@ export default class MainScene extends Phaser.Scene {
   pairs: number[][] = [];
   playersData: Record<number, PlayerData> = {};
 
-  socket: SocketConnection = new SocketConnection(this.playerX, this.playerY);
+  socket: SocketConnection;
 
   constructor() {
     super("MainScene");
