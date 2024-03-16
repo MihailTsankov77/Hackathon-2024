@@ -165,7 +165,49 @@ func handleCommands(conn *websocket.Conn, message []byte) {
 				}
 			}
 		}
+	} else if cmd[0] == "disconnect" {
+		data := strings.Split(cmd[1], " ")
+		playerId1, err := strconv.Atoi(data[0])
+		if err != nil {
+			fmt.Println("Failed to convert player id:", err)
+			return
+		}
 
+		playerId2, err := strconv.Atoi(data[1])
+		if err != nil {
+			fmt.Println("Failed to convert player id:", err)
+			return
+		}
+
+		isMutual, err := strconv.ParseBool(data[2])
+		if err != nil {
+			fmt.Println("Failed to convert mutual:", err)
+			return
+		}
+
+		for i, connection := range playerConnections {
+			if connection[0] == playerId1 || connection[0] == playerId2 {
+				playerConnections = append(playerConnections[:i], playerConnections[(i+1):]...)
+			}
+		}
+
+		if !isMutual {
+			players[playerId1] = Player{
+				Id:       players[playerId1].Id,
+				X:        players[playerId1].X,
+				Y:        players[playerId1].Y,
+				Points:   players[playerId1].Points + int(float64(players[playerId1].Points)*(1.0/5.0)),
+				Cooldown: 60,
+			}
+
+			players[playerId2] = Player{
+				Id:       players[playerId2].Id,
+				X:        players[playerId2].X,
+				Y:        players[playerId2].Y,
+				Points:   players[playerId2].Points - int(float64(players[playerId2].Points)*(1.0/5.0)),
+				Cooldown: 0,
+			}
+		}
 	}
 }
 
