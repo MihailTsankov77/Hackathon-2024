@@ -15,10 +15,9 @@ export class Player {
     this.unit = new Unit(id, x, y, game, {
       name: "player",
       scale: 0.1,
-      
     });
 
-    this.game.cameras.main.startFollow(this.unit.sprite);
+    this.game.cameras.main.startFollow(this.unit.sprite, true);
     this.pointer = this.game.input.activePointer;
   }
 
