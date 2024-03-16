@@ -1,6 +1,8 @@
 import Phaser from "phaser";
 import { Sprite } from "../../utils/types";
 import { Unit } from "./Unit";
+import { PlayerGroup } from "../player/PlayerGroup";
+import { Bot } from "./Bot";
 
 type Point = {
   x: number;
@@ -95,9 +97,63 @@ export class Pair {
     this.hand.destroy();
   };
 
-  checkCollision(collide: () => void, player: Point) {
-    if (isPointBetween(player, this.unit1.sprite, this.unit2.sprite, 20)) {
+  offset = 40;
+
+  checkCollision(collide: () => void, playerGroup: PlayerGroup) {
+    if (
+      isPointBetween(
+        playerGroup.player.unit.sprite,
+        this.unit1.sprite,
+        this.unit2.sprite,
+        this.offset
+      )
+    ) {
       collide();
+
+      return;
+    }
+
+    if (
+      playerGroup.unit2 &&
+      isPointBetween(
+        playerGroup.unit2.sprite,
+        this.unit1.sprite,
+        this.unit2.sprite,
+        this.offset
+      )
+    ) {
+      collide();
+
+      return;
+    }
+  }
+
+  checkCollision2(collide: () => void, bot: Bot) {
+    if (
+      isPointBetween(
+        bot.unit1.sprite,
+        this.unit1.sprite,
+        this.unit2.sprite,
+        this.offset
+      )
+    ) {
+      collide();
+
+      return;
+    }
+
+    if (
+      bot.unit2 &&
+      isPointBetween(
+        bot.unit2.sprite,
+        this.unit1.sprite,
+        this.unit2.sprite,
+        this.offset
+      )
+    ) {
+      collide();
+
+      return;
     }
   }
 

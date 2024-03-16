@@ -50,4 +50,12 @@ export class PlayerGroup {
       this.pair.update();
     }
   }
+
+  getIds() {
+    if (this.unit2) {
+      return [this.player.unit.id, this.unit2?.id];
+    }
+
+    return [this.player.unit.id];
+  }
 }

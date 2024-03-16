@@ -4,6 +4,8 @@ import { Bot } from "../players/units/Bot";
 import { SocketConnection } from "../connection/connectionMain";
 import { PlayerGroup } from "../players/player/PlayerGroup";
 
+export type CollideFun = (group1: number[], group2: number[]) => void;
+
 export type PlayerData = {
   id: number;
   x: number;
@@ -43,12 +45,16 @@ const MockPos: Record<number, PlayerData> = {
     points: 0,
     cooldown: 0,
   },
+  6: {
+    id: 3,
+    x: 799,
+    y: 800,
+    points: 0,
+    cooldown: 0,
+  },
 };
 
-const MockPair = [
-  [1, 2],
-  [3, 4],
-];
+const MockPair = [[1, 2], [3, 4], [6]];
 
 export default class MainScene extends Phaser.Scene {
   playerGroup: PlayerGroup;
@@ -207,9 +213,9 @@ export default class MainScene extends Phaser.Scene {
       this.botsByIds[id] = new Bot(plData1, plData2, this);
 
       this.botsByIds[id].addCollisionWithAPlayer(
-        this.playerGroup.player,
+        this.playerGroup,
         (groupOne: number[], groupTwo: number[]) => {
-          console.log("blob");
+          console.log(groupOne, groupTwo);
         }
       );
     }
@@ -219,7 +225,7 @@ export default class MainScene extends Phaser.Scene {
     this.playerGroup.update(this.socket);
 
     Object.values(this.botsByIds).forEach((bot) =>
-      bot.update(this.playerGroup.player)
+      bot.update(this.playerGroup)
     );
 
     // this.pairs = this.pairs.filter((pair) => !pair.maybeSplitHand());

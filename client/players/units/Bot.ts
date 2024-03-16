@@ -1,8 +1,8 @@
 import Phaser from "phaser";
 import { Unit } from "./Unit";
-import { PlayerData } from "../../Scenes/MainScene";
+import { CollideFun, PlayerData } from "../../Scenes/MainScene";
 import { Pair } from "./Pair";
-import { Player } from "../player/Player";
+import { PlayerGroup } from "../player/PlayerGroup";
 
 export class Bot {
   game: Phaser.Scene;
@@ -79,27 +79,57 @@ export class Bot {
     return [];
   };
 
-  update(player: Player) {
+  update(playerGroup: PlayerGroup) {
     if (this.pair) {
       this.pair.update();
-      this.pair.checkCollision(this.collideFunction, player.unit.sprite);
+      this.pair.checkCollision(this.collideFunction, playerGroup);
+    }
+
+    if (playerGroup.pair) {
+      playerGroup.pair.checkCollision2(this.collideFunction, this);
     }
   }
 
-  addCollisionWithAPlayer(player: Player, collide: () => void) {
-    this.collideFunction = collide;
+  addCollisionWithAPlayer(playerGroup: PlayerGroup, collide: CollideFun) {
+    this.collideFunction = () => {
+      collide(this.getIds(), playerGroup.getIds());
+    };
     this.game.physics.add.collider(
-      player.unit.sprite,
+      playerGroup.player.unit.sprite,
       this.unit1.sprite,
       this.collideFunction
     );
 
     if (this.unit2) {
       this.game.physics.add.collider(
-        player.unit.sprite,
+        playerGroup.player.unit.sprite,
         this.unit2.sprite,
         this.collideFunction
       );
     }
+
+    if (playerGroup.unit2) {
+      this.game.physics.add.collider(
+        playerGroup.unit2.sprite,
+        this.unit1.sprite,
+        this.collideFunction
+      );
+
+      if (this.unit2) {
+        this.game.physics.add.collider(
+          playerGroup.unit2.sprite,
+          this.unit2.sprite,
+          this.collideFunction
+        );
+      }
+    }
+  }
+
+  getIds() {
+    if (this.unit2) {
+      return [this.unit1.id, this.unit2?.id];
+    }
+
+    return [this.unit1.id];
   }
 }
