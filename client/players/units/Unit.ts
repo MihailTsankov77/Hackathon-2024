@@ -38,6 +38,7 @@ export class Unit {
 
   destroy() {
     this.sprite.destroy();
+    this.score.destroy();
   }
 
   //equvalent of update
