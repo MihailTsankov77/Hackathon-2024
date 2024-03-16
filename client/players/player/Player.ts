@@ -33,9 +33,14 @@ export class Player {
     socket.sendLocation(this.unit.sprite.x, this.unit.sprite.y);
   }
 
-  update(socket: SocketConnection, newScore: number,newTimer: number) {
+  update(socket: SocketConnection, newScore: number, newTimer: number) {
     // TODO: bug when the mouse is not moved for long time
-    this.unit.goto(this.pointer.worldX, this.pointer.worldY, newScore,newTimer);
+    this.unit.goto(
+      this.pointer.worldX,
+      this.pointer.worldY,
+      newScore,
+      newTimer
+    );
     //function to send location to the BE
     this.sendLocation(socket);
   }

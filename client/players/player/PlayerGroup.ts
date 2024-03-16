@@ -12,7 +12,7 @@ export class PlayerGroup {
   pair: Pair | undefined;
 
   score: number = 0;
-  cooldown: number =0;
+  cooldown: number = 0;
 
   constructor(playerData: PlayerData, game: Phaser.Scene) {
     this.game = game;
@@ -36,7 +36,7 @@ export class PlayerGroup {
 
         this.pair = new Pair(this.player.unit, this.unit2, this.game);
       } else {
-        this.unit2.goto(plData2.x, plData2.y, plData2.points,plData2.cooldown);
+        this.unit2.goto(plData2.x, plData2.y, plData2.points, plData2.cooldown);
       }
     } else {
       this.pair?.playSplitAnimation();
@@ -46,7 +46,7 @@ export class PlayerGroup {
   }
 
   update(socket: SocketConnection) {
-    this.player.update(socket, this.score,this.cooldown);
+    this.player.update(socket, this.score, this.cooldown);
 
     if (this.pair) {
       this.pair.update();
