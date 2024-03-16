@@ -19,12 +19,10 @@ func (manager *ClientManager) Start() {
 		case conn := <-manager.Register:
 			manager.Clients[conn] = -1
 		case conn := <-manager.Unregister:
-			if manager.Clients[conn] != -1 {
-				delete(players, manager.Clients[conn])
-			}
-			fmt.Println("Unregistering client")
+			delete(players, manager.Clients[conn])
 			delete(manager.Clients, conn)
 			conn.Close()
+			fmt.Println("Unregistering client")
 		case message := <-manager.Broadcast:
 			for conn := range manager.Clients {
 				err := conn.WriteMessage(websocket.TextMessage, message)

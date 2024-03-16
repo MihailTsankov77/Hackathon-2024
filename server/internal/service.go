@@ -32,9 +32,9 @@ func WsHandler(w http.ResponseWriter, r *http.Request) {
 		for {
 			_, message, err := conn.ReadMessage()
 			if err != nil {
-				fmt.Println("Failed to read message:", err)
+				fmt.Printf("Web socket error: %s\n", err)
 				Manager.Unregister <- conn
-				break
+				return
 			}
 			handleCommands(conn, message)
 		}
