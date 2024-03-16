@@ -59,9 +59,23 @@ export default class MainScene extends Phaser.Scene {
 
   constructor() {
     super("MainScene");
+
   }
 
-  init() {}
+  async joinPlayer(){
+    try{
+      const response = await this.socket.joinSocket(500,500);
+      console.log("Recieved response",response);
+    } catch (error) {
+      console.error('Error sending location:', error);
+    }
+  }
+
+  
+
+ async  init() {
+    await this.joinPlayer();
+  }
 
   preload() {
     preloadImages(this);
