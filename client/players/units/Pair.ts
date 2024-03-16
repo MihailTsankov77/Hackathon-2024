@@ -64,12 +64,18 @@ export class Pair {
     // TODO Marinkov
   };
 
+  destroyHand = (): void =>{
+    this.hand.destroy();
+  };
+
   maybeSplitHand = (): boolean => {
     if (this.getDistance() < this.MaxDistance) {
       return false;
     }
 
     this.playSplitAnimation();
+
+    this.destroyHand();
 
     return true;
   };
