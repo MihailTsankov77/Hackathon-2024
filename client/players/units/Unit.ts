@@ -1,4 +1,5 @@
 import { Sprite } from "../../utils/types";
+import {Score} from "./Score"
 
 type SpriteConfig = {
   name: string;
@@ -8,6 +9,7 @@ export class Unit {
   id: number;
   SPEED = 100;
 
+  score:Score= {} as Score;
   sprite: Sprite = {} as Sprite;
   game: Phaser.Scene = {} as Phaser.Scene;
 
@@ -25,6 +27,9 @@ export class Unit {
     this.sprite = this.game.physics.add.sprite(x, y, spriteConfig.name);
     this.sprite.setScale(spriteConfig.scale);
     this.sprite.setCollideWorldBounds(true);
+    this.score= new Score(x+40,y,game)
+
+    //Marti
   }
 
   dead() {
@@ -38,5 +43,10 @@ export class Unit {
 
   goto(x: number, y: number): void {
     this.game.physics.moveToObject(this.sprite, { x, y }, this.SPEED);
+    //this.game.physics.moveToObject(this.score.digitsSprite, { x, y:y-60 }, this.SPEED);
+    //this.game.physics.moveToObject(this.score.digitsText,{ x, y:y-60 }, this.SPEED);
+    this.score.digitsText.setPosition(this.sprite.x,this.sprite.y-60);
   }
+
+
 }

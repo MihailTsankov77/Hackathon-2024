@@ -60,7 +60,7 @@ export class Bot {
     this.dataPlayer1 = dataPlayer1;
     this.dataPlayer2 = dataPlayer2;
     this.unit1.goto(dataPlayer1.x, dataPlayer1.y);
-
+//Marti
     if (this.unit2 && dataPlayer2) {
       this.unit2.goto(dataPlayer2.x, dataPlayer2.y);
     }
