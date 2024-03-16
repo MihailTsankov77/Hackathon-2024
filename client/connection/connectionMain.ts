@@ -1,7 +1,7 @@
 export class SocketConnection {
   socket: WebSocket;
   debug = false;
-  address = "localhost"; //"10.108.5.150"
+  address = "10.108.5.150";
   constructor(x: number, y: number) {
     this.socket = new WebSocket(`ws://${this.address}:8080/ws`);
 
