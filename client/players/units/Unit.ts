@@ -19,7 +19,7 @@ export class Unit {
     x: number,
     y: number,
     game: Phaser.Scene,
-    spriteConfig: SpriteConfig,
+    spriteConfig: SpriteConfig
   ) {
     this.game = game;
 
@@ -29,11 +29,10 @@ export class Unit {
     this.sprite.setScale(spriteConfig.scale);
     this.sprite.setCollideWorldBounds(true);
     this.score = new Score(x + 40, y, game);
-    //Marti
   }
 
   dead() {
-    // TODO Marinkov play dead animation + destroy
+    // TODO Marinkov play dead animation
     this.destroy();
   }
 
@@ -50,10 +49,5 @@ export class Unit {
     this.timer = newTimer;
     this.score.digitsText.setPosition(this.sprite.x - 17, this.sprite.y - 100);
     this.score.update(newScore);
-
-    //Vassi
-    //this.timer.update(newTime);
-
-    //console.log("Hi");
   }
 }

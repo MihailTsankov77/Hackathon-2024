@@ -50,6 +50,7 @@ export class PlayerGroup {
 
     if (this.pair) {
       this.pair.update();
+      this.pair.maybeSplitHand(socket);
     }
   }
 

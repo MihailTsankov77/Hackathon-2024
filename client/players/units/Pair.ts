@@ -3,6 +3,7 @@ import { Sprite } from "../../utils/types";
 import { Unit } from "./Unit";
 import { PlayerGroup } from "../player/PlayerGroup";
 import { Bot } from "./Bot";
+import { SocketConnection } from "../../connection/connectionMain";
 
 type Point = {
   x: number;
@@ -166,14 +167,14 @@ export class Pair {
     return [this.unit1.id, this.unit2.id];
   }
 
-  maybeSplitHand = (): boolean => {
-    // TODO this method is only for the player pair
+  maybeSplitHand = (socket: SocketConnection) => {
     if (this.getDistance() < this.MaxDistance) {
-      return false;
+      return;
     }
 
     this.playSplitAnimation();
 
-    return true;
+    socket.sendDisconnect(this.unit1.id, this.unit2.id, true);
+    return;
   };
 }
