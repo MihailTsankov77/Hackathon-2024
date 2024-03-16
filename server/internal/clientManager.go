@@ -19,7 +19,7 @@ func (manager *ClientManager) Start() {
 		case conn := <-manager.Register:
 			manager.Clients[conn] = -1
 		case conn := <-manager.Unregister:
-			delete(players, manager.Clients[conn])
+			delete(players.Values, manager.Clients[conn])
 			delete(manager.Clients, conn)
 			conn.Close()
 			fmt.Println("Unregistering client")

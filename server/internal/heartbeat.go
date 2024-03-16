@@ -16,7 +16,7 @@ type HeartbeatResponse struct {
 }
 
 func heartbeat() {
-	if len(players) == 0 {
+	if len(players.Values) == 0 {
 		return
 	}
 
@@ -27,7 +27,7 @@ func heartbeat() {
 	}
 
 	response := HeartbeatResponse{
-		Players:     players,
+		Players:     players.Values,
 		Connections: playerConnections,
 	}
 
@@ -42,7 +42,7 @@ func heartbeat() {
 		fmt.Println("Failed to marshal players:", err)
 		return
 	}
-
+	fmt.Printf("Broadcasting heartbeat: %s\n", responseJson)
 	Manager.Broadcast <- []byte(fmt.Sprintf("heartbeat %s", responseJson))
 }
 
