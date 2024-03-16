@@ -11,7 +11,7 @@ export type PlayerData = {
   x: number;
   y: number;
   points: number;
-  // delay: number
+  cooldown: number
 };
 
 export default class MainScene extends Phaser.Scene {

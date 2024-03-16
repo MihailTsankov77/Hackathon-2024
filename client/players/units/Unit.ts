@@ -48,6 +48,10 @@ export class Unit {
     //this.game.physics.moveToObject(this.score.digitsText,{ x, y:y-60 }, this.SPEED);
     this.score.digitsText.setPosition(this.sprite.x-17,this.sprite.y-100);
     this.score.update(newScore);
+
+    //Vassi
+    //this.timer.update(newTime);
+    
     //console.log("Hi");
   }
 
