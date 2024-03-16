@@ -105,7 +105,7 @@ export default class MainScene extends Phaser.Scene {
   }
 
   update() {
-    this.player.update();
+    this.player.update(this.socket);
 
     Object.values(this.botsByIds).forEach((bot) => bot.update());
 

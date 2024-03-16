@@ -1,4 +1,5 @@
 import { Unit } from "../units/Unit";
+import { SocketConnection } from "../../connection/connectionMain";
 
 export class Player {
   SPEED = 200;
@@ -19,9 +20,16 @@ export class Player {
     this.pointer = this.game.input.activePointer;
   }
 
-  update() {
+  sendLocation(socket:SocketConnection){
+    socket.sendLocation(this.unit.sprite.x, this.unit.sprite.y);
+  }
+  update(socket: SocketConnection) {
     // TODO: bug when the mouse is not moved for long time
     this.unit.goto(this.pointer.worldX, this.pointer.worldY);
+    
+    //function to send location to the BE
+    this.sendLocation(socket);
+
 
     // TODO:
     // const angle = Phaser.Math.Angle.Between(

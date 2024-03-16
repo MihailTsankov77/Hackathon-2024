@@ -23,5 +23,18 @@ export class SocketConnection{
 
     }
 
+    sendLocation(x:number, y:number){
+
+        if(this.socket.readyState== WebSocket.OPEN){
+            this.socket.send(`move ${x} ${y}`);
+            //console.log("KUR");
+        }
+    }
+
+    update (x:number, y:number){
+
+        this.sendLocation(x,y);
+    }
+
     
 }
