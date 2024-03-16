@@ -22,5 +22,15 @@ export class Player {
   update() {
     // TODO: bug when the mouse is not moved for long time
     this.unit.goto(this.pointer.worldX, this.pointer.worldY);
+
+    // TODO:
+    // const angle = Phaser.Math.Angle.Between(
+    //   this.unit.sprite.x,
+    //   this.unit.sprite.y,
+    //   this.pointer.worldX,
+    //   this.pointer.worldY
+    // );
+
+    // this.unit.sprite.setRotation(angle);
   }
 }

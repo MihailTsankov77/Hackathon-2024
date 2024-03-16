@@ -2,10 +2,13 @@ import Phaser from "phaser";
 import { preloadImages } from "../utils/images";
 import { Player } from "../players/player/Player";
 import { Unit } from "../players/units/Unit";
+import { Pair } from "../players/units/Pair";
 
 export default class MainScene extends Phaser.Scene {
   player: Player;
-  unit: Unit;
+
+  pair: Pair;
+
   constructor() {
     super("MainScene");
   }
@@ -38,15 +41,17 @@ export default class MainScene extends Phaser.Scene {
     this.setUpCameraAndBackground();
 
     this.player = new Player(500, 500, this);
-    this.unit = new Unit(200, 200, this, {
+
+    const unit = new Unit(900, 400, this, {
       name: "slavi",
       scale: 0.7,
     });
 
-    this.unit.goto(window.innerWidth, window.innerHeight);
+    this.pair = new Pair(this.player.unit, unit, this);
   }
 
   update() {
     this.player.update();
+    this.pair.update();
   }
 }
