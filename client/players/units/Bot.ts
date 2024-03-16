@@ -62,20 +62,31 @@ export class Bot {
   updateData = (dataPlayer1: PlayerData, dataPlayer2?: PlayerData) => {
     this.dataPlayer1 = dataPlayer1;
     this.dataPlayer2 = dataPlayer2;
-    this.unit1.goto(
-      dataPlayer1.x,
-      dataPlayer1.y,
-      dataPlayer1.points,
-      dataPlayer1.cooldown,
-    );
+    
 
     if (this.unit2 && dataPlayer2) {
+      this.unit1.goto(
+        dataPlayer1.x,
+        dataPlayer1.y,
+        dataPlayer1.points,
+        dataPlayer1.cooldown,
+        true
+      );
       //console.log(dataPlayer2.points);
       this.unit2.goto(
         dataPlayer2.x,
         dataPlayer2.y,
         dataPlayer2.points,
         dataPlayer2.cooldown,
+        true
+      );
+    } else  {
+      this.unit1.goto(
+        dataPlayer1.x,
+        dataPlayer1.y,
+        dataPlayer1.points,
+        dataPlayer1.cooldown,
+        false
       );
     }
   };

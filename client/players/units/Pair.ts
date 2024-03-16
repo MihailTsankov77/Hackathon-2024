@@ -97,7 +97,7 @@ export class Pair {
     this.hand.destroy();
   };
 
-  offset = 40;
+  offset = 10;
 
   checkCollision(collide: () => void, playerGroup: PlayerGroup) {
     if (

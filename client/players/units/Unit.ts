@@ -42,16 +42,22 @@ export class Unit {
   }
 
   //equvalent of update
-  goto(x: number, y: number, newScore: number, newTimer: number): void {
-    this.game.physics.moveToObject(this.sprite, { x, y }, this.SPEED);
+  goto(x: number, y: number, newScore: number, newTimer: number,isConnected : boolean): void {
+    
+    if(isConnected){
+      this.game.physics.moveToObject(this.sprite, { x, y }, 500);
+
+    }else{
+      this.game.physics.moveToObject(this.sprite, { x, y }, this.SPEED);
+
+    }
     //this.game.physics.moveToObject(this.score.digitsSprite, { x, y:y-60 }, this.SPEED);
     //this.game.physics.moveToObject(this.score.digitsText,{ x, y:y-60 }, this.SPEED);
 
     this.score.digitsText.setPosition(this.sprite.x - 17, this.sprite.y - 100);
     this.score.update(newScore);
 
-    //Vassi
-    //this.timer.update(newTime);
+    
 
     //console.log("Hi");
   }

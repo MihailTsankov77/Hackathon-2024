@@ -36,7 +36,7 @@ export class PlayerGroup {
 
         this.pair = new Pair(this.player.unit, this.unit2, this.game);
       } else {
-        this.unit2.goto(plData2.x, plData2.y, plData2.points, plData2.cooldown);
+        this.unit2.goto(plData2.x, plData2.y, plData2.points, plData2.cooldown,false);
       }
     } else {
       this.pair?.playSplitAnimation();

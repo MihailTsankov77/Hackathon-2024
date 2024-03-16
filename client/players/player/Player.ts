@@ -2,7 +2,7 @@ import { Unit } from "../units/Unit";
 import { SocketConnection } from "../../connection/connectionMain";
 
 export class Player {
-  SPEED = 200;
+  SPEED = 500;
 
   unit: Unit;
   game: Phaser.Scene;
@@ -39,7 +39,8 @@ export class Player {
       this.pointer.worldX,
       this.pointer.worldY,
       newScore,
-      newTimer
+      newTimer,
+      false
     );
     //function to send location to the BE
     this.sendLocation(socket);
