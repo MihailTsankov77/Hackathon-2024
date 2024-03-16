@@ -28,6 +28,18 @@ var players map[int]Player = make(map[int]Player)
 
 var playerConnections [][]int
 
+func connectPlayer(player1, player2 Player) {
+	player1.Cooldown = 10
+
+	players[player1.Id] = player1
+
+	player2.Cooldown = 10
+
+	players[player2.Id] = player2
+
+	playerConnections = append(playerConnections, []int{player1.Id, player2.Id})
+}
+
 func updatePlayers() {
 	for _, player := range players {
 		if player.Cooldown > 0 {
