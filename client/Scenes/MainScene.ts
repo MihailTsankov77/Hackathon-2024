@@ -20,8 +20,8 @@ export default class MainScene extends Phaser.Scene {
   gameWidth = 2000;
   gameHeight = 2000;
 
-  playerX = 500;
-  playerY = 500;
+  playerX = 0;
+  playerY = 0;
   playerId = -1;
 
   // playerPair: Bot;
@@ -34,6 +34,8 @@ export default class MainScene extends Phaser.Scene {
 
   constructor() {
     super("MainScene");
+    this.playerX = this.getRandomWidth();
+    this.playerY = this.getRandomHight();
   }
 
   init() {}
@@ -42,15 +44,31 @@ export default class MainScene extends Phaser.Scene {
     preloadImages(this);
   }
 
+  getRandomWidth() {
+    const leftOrRight = Math.round(Math.random());
+    const offset = Math.random() * 100 + 200;
+
+    return (1 - leftOrRight * 2) * offset + leftOrRight > 0 ? innerWidth : 0;
+  }
+
+  getRandomHight() {
+    const offset =
+      Math.random() * (innerHeight - 1.5 * this.gameWidth) +
+      1.5 * this.gameHeight;
+
+    return offset;
+  }
+
   setUpCameraAndBackground() {
     this.cameras.main.setBounds(0, 0, this.gameWidth, this.gameHeight);
+    this.cameras.main.setZoom(1);
 
     const background = this.add.tileSprite(
       0,
       0,
       this.gameWidth,
       this.gameHeight,
-      "background"
+      "background",
     );
     background.setOrigin(0, 0);
 
@@ -67,7 +85,7 @@ export default class MainScene extends Phaser.Scene {
 
     this.updateData();
 
-    this.player = new Player(this.playerId, 500, 500, this);
+    this.player = new Player(this.playerId, this.playerX, this.playerY, this);
     this.joinServer();
   }
 
@@ -103,7 +121,7 @@ export default class MainScene extends Phaser.Scene {
 
   killPlayers() {
     const toBeKilled = Object.keys(this.botsByIds).filter((id) =>
-      this.pairs.every((pair) => id !== this.getPairId(pair))
+      this.pairs.every((pair) => id !== this.getPairId(pair)),
     );
 
     let addIds: number[] = [];
