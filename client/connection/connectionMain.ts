@@ -1,3 +1,14 @@
+function throttle(func, delay) {
+  let lastCalledTime = 0;
+  return function (...args) {
+    const now = Date.now();
+    if (now - lastCalledTime >= delay) {
+      func.apply(this, args);
+      lastCalledTime = now;
+    }
+  };
+}
+
 export class SocketConnection {
   socket: WebSocket;
   debug = false;
@@ -10,7 +21,6 @@ export class SocketConnection {
       `ws://${this.online ? this.bojo : "localhost"}:8080/ws`
     );
 
-    // TODO remove Debug
     this.socket.onopen = () => {
       if (this.debug) {
         console.log("Connected to WebSocket server");
@@ -51,6 +61,13 @@ export class SocketConnection {
       messageHandle(event.data);
     };
   }
+
+  sendCollision = throttle((event: { winners: number[]; losers: number[] }) => {
+    if (this.socket.readyState == WebSocket.OPEN) {
+      this.socket.send(`collision ${JSON.stringify(event)}`);
+    }
+    // console.log(event);
+  }, 1000);
 
   update(x: number, y: number) {
     this.sendLocation(x, y);

@@ -40,7 +40,7 @@ const MockPos: Record<number, PlayerData> = {
     points: 0,
     cooldown: 0,
   },
-  4: {
+  0: {
     id: 3,
     x: 1000,
     y: 1000,
@@ -56,7 +56,7 @@ const MockPos: Record<number, PlayerData> = {
   },
 };
 
-const MockPair = [[1, 2], [3, 4], [6]];
+const MockPair = [[1, 2], [3, 0], [6]];
 
 export default class MainScene extends Phaser.Scene {
   playerGroup: PlayerGroup;
@@ -66,7 +66,7 @@ export default class MainScene extends Phaser.Scene {
 
   playerX = 0;
   playerY = 0;
-  playerId = 4;
+  playerId = 0;
 
   // playerPair: Bot;
   botsByIds: Record<string, Bot> = {};
@@ -114,7 +114,7 @@ export default class MainScene extends Phaser.Scene {
       0,
       this.gameWidth,
       this.gameHeight,
-      "background",
+      "background"
     );
     background.setOrigin(0, 0);
 
@@ -137,7 +137,7 @@ export default class MainScene extends Phaser.Scene {
         points: 0,
         cooldown: 0,
       },
-      this,
+      this
     );
 
     this.updateData();
@@ -181,7 +181,7 @@ export default class MainScene extends Phaser.Scene {
 
   killPlayers() {
     const toBeKilled = Object.keys(this.botsByIds).filter((id) =>
-      this.pairs.every((pair) => id !== this.getPairId(pair)),
+      this.pairs.every((pair) => id !== this.getPairId(pair))
     );
 
     let addIds: number[] = [];
@@ -222,18 +222,45 @@ export default class MainScene extends Phaser.Scene {
 
       this.botsByIds[id].addCollisionWithAPlayer(
         this.playerGroup,
-        (groupOne: number[], groupTwo: number[]) => {
-          console.log(groupOne, groupTwo);
-        },
+        this.checkWinLose
       );
     }
   }
+
+  checkWinLose = (groupOne: number[], groupTwo: number[]) => {
+    const scoreGroupOne = groupOne.reduce(
+      (acc, id) => acc + this.playersData[id].points,
+      0
+    );
+    const scoreGroupTwo = groupTwo.reduce(
+      (acc, id) => acc + this.playersData[id].points,
+      0
+    );
+
+    const sender = Math.min(...groupOne.concat(groupTwo));
+
+    if (sender !== this.playerId) {
+      return;
+    }
+
+    if (scoreGroupOne > scoreGroupTwo) {
+      this.socket.sendCollision({
+        winners: groupOne,
+        losers: groupTwo,
+      });
+    } else {
+      this.socket.sendCollision({
+        winners: groupTwo,
+        losers: groupOne,
+      });
+    }
+  };
 
   update() {
     this.playerGroup.update(this.socket);
 
     Object.values(this.botsByIds).forEach((bot) =>
-      bot.update(this.playerGroup),
+      bot.update(this.playerGroup)
     );
 
     // this.pairs = this.pairs.filter((pair) => !pair.maybeSplitHand());
