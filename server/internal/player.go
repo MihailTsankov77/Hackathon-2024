@@ -177,6 +177,20 @@ func handleCommands(conn *websocket.Conn, message []byte) {
 				}
 			}
 		}
+	} else if cmd[0] == "connect" {
+		data := strings.Split(cmd[1], " ")
+		playerId1, err := strconv.Atoi(data[0])
+		if err != nil {
+			fmt.Println("Failed to convert player id:", err)
+			return
+		}
+		playerId2, err := strconv.Atoi(data[1])
+		if err != nil {
+			fmt.Println("Failed to convert player id:", err)
+			return
+		}
+		connectPlayer(players[playerId1], players[playerId2])
+
 	} else if cmd[0] == "disconnect" {
 		data := strings.Split(cmd[1], " ")
 		playerId1, err := strconv.Atoi(data[0])
