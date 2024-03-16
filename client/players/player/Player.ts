@@ -21,7 +21,8 @@ export class Player {
   }
 
   dead() {
-    alert("YOU DIED // TODO");
+    this.game.scene.launch("GameOver", { launchScene: this.game });
+    this.game.scene.stop();
   }
 
   setId(id: number) {
@@ -35,7 +36,6 @@ export class Player {
   update(socket: SocketConnection, newScore: number) {
     // TODO: bug when the mouse is not moved for long time
     this.unit.goto(this.pointer.worldX, this.pointer.worldY, newScore);
-
     //function to send location to the BE
     this.sendLocation(socket);
   }
