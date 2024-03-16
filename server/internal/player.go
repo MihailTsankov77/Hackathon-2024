@@ -83,9 +83,12 @@ func (a ByPoints) Swap(i, j int) {
 	a[i], a[j] = a[j], a[i]
 }
 
-func leaderboardUpdate() {
+func leaderboardUpdate(players []Player) []Player {
+	sorted := make([]Player, len(players))
+	copy(sorted, players)
+	sort.Sort(ByPoints(sorted))
+	return sorted
 
-	sort.Sort(ByPoints(maps.Values(players)))
 }
 func handleCommands(conn *websocket.Conn, message []byte) {
 	cmd := strings.SplitN(string(message), " ", 2)
@@ -254,6 +257,16 @@ func handleCommands(conn *websocket.Conn, message []byte) {
 				Cooldown: 0,
 			}
 		}
+	} else if cmd[0] == "leaderboard" {
+		sortedLeaderboard := maps.Values(players)
+		sortedLeaderboard = leaderboardUpdate(sortedLeaderboard)
+
+		jsonRes, err := json.Marshal(sortedLeaderboard)
+		if err != nil {
+			fmt.Println("Failed to marshal leaderboard:", err)
+			return
+		}
+		conn.WriteMessage(1, jsonRes)
 	}
 }
 
