@@ -11,14 +11,7 @@ func main() {
 	go internal.Manager.Start()
 	http.HandleFunc("/ws", internal.WsHandler)
 
-	go func() {
-		for {
-			select {
-			case <-internal.HeartbeatTicker.C:
-				internal.Heartbeat()
-			}
-		}
-	}()
+	go internal.HandleHeartbeat()
 
 	fmt.Println("Starting WebSocket server on :8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
