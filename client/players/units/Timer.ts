@@ -13,7 +13,6 @@ export class Timer {
       fontSize: 72,
       fontStyle: "bold",
     });
-    this.timeText.setActive(true);
   }
 
   update(newTime: number) {

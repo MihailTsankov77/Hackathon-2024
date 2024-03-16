@@ -128,12 +128,6 @@ export default class MainScene extends Phaser.Scene {
 
   create() {
     this.setUpCameraAndBackground();
-    this.timer = new Timer(
-      this.cameras.main.scrollX,
-      this.cameras.main.scrollY,
-      this,
-    );
-
 
     this.playerGroup = new PlayerGroup(
       {
@@ -149,6 +143,10 @@ export default class MainScene extends Phaser.Scene {
     this.updateData();
 
     this.joinServer();
+    this.timer = new Timer(10, this.cameras.main.height - 85, this);
+
+    // this.timer.timeText.setOrigin(0.5, 0.5);
+    this.timer.timeText.setScrollFactor(0);
   }
 
   handleMessage = (rawData: string) => {
@@ -217,7 +215,6 @@ export default class MainScene extends Phaser.Scene {
     const plData1 = this.playersData[ids[0]];
     const plData2 = ids.length > 1 ? this.playersData[ids[1]] : undefined;
 
-    console.log(this.playerGroup);
     if (this.botsByIds[id]) {
       this.botsByIds[id].updateData(plData1, plData2);
     } else {
@@ -234,13 +231,6 @@ export default class MainScene extends Phaser.Scene {
 
   update() {
     this.playerGroup.update(this.socket);
-    this.timer.timeText.setPosition(
-      this.cameras.main.scrollX - 500,
-      this.cameras.main.scrollY - 500,
-    );
-
-    this.timer.timeText.update();
-    console.log(this.timer.timeText.getBounds());
 
     Object.values(this.botsByIds).forEach((bot) =>
       bot.update(this.playerGroup),

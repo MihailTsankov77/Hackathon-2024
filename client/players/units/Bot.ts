@@ -104,7 +104,6 @@ export class Bot {
     this.collideFunction = () => {
       collide(this.getIds(), playerGroup.getIds());
     };
-    console.log(playerGroup);
     this.game.physics.add.collider(
       playerGroup.player.unit.sprite,
       this.unit1.sprite,
