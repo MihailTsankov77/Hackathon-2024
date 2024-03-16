@@ -1,5 +1,6 @@
 import { Sprite } from "../../utils/types";
 import {Score} from "./Score"
+import { Timer } from "./Timer";
 
 type SpriteConfig = {
   name: string;
@@ -12,6 +13,7 @@ export class Unit {
   score:Score= {} as Score;
   sprite: Sprite = {} as Sprite;
   game: Phaser.Scene = {} as Phaser.Scene;
+  timer:Timer ={} as Timer;
 
   constructor(
     id: number,
@@ -28,7 +30,7 @@ export class Unit {
     this.sprite.setScale(spriteConfig.scale);
     this.sprite.setCollideWorldBounds(true);
     this.score= new Score(x+40,y,game)
-
+    this.timer = new Timer(0,window.innerHeight, game);
     //Marti
   }
 
@@ -42,10 +44,12 @@ export class Unit {
   }
 
   //equvalent of update
-  goto(x: number, y: number,newScore:number): void {
+  goto(x: number, y: number,newScore:number,newTimer:number): void {
     this.game.physics.moveToObject(this.sprite, { x, y }, this.SPEED);
     //this.game.physics.moveToObject(this.score.digitsSprite, { x, y:y-60 }, this.SPEED);
     //this.game.physics.moveToObject(this.score.digitsText,{ x, y:y-60 }, this.SPEED);
+    //this.timer.timeText.setPosition(window.innerHeight, 0);
+    this.timer.update(newTimer);
     this.score.digitsText.setPosition(this.sprite.x-17,this.sprite.y-100);
     this.score.update(newScore);
 

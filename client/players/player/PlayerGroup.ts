@@ -12,6 +12,7 @@ export class PlayerGroup {
   pair: Pair | undefined;
 
   score: number = 0;
+  cooldown: number =0;
 
   constructor(playerData: PlayerData, game: Phaser.Scene) {
     this.game = game;
@@ -24,6 +25,7 @@ export class PlayerGroup {
 
   updateData(plData1: PlayerData, plData2: PlayerData | undefined) {
     this.score = plData1.points;
+    this.cooldown = plData1.cooldown;
 
     if (plData2) {
       if (!this.unit2) {
@@ -34,7 +36,7 @@ export class PlayerGroup {
 
         this.pair = new Pair(this.player.unit, this.unit2, this.game);
       } else {
-        this.unit2.goto(plData2.x, plData2.y, plData2.points);
+        this.unit2.goto(plData2.x, plData2.y, plData2.points,plData2.cooldown);
       }
     } else {
       // TODO kill group or ddz
@@ -47,7 +49,7 @@ export class PlayerGroup {
   };
 
   update(socket: SocketConnection) {
-    this.player.update(socket, this.score);
+    this.player.update(socket, this.score,this.cooldown);
 
     if (this.pair) {
       this.pair.update();
