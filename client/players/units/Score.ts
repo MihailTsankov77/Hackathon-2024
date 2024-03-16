@@ -12,4 +12,8 @@ export class Score{
         //this.digitsSprite = game.physics.add.sprite(x,y,"score");
         this.digitsText= game.add.text(x,y,"123",{color: '#000000',fontSize: 22, fontStyle:'bold'});
     }
+
+    destroy(){
+        this.digitsText.destroy();
+    }
 }

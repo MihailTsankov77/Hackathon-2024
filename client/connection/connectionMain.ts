@@ -1,9 +1,14 @@
 export class SocketConnection {
   socket: WebSocket;
   debug = false;
-  address = "10.108.5.150";
+
+  online = true;
+  bojo = "10.108.5.150";
+
   constructor(x: number, y: number) {
-    this.socket = new WebSocket(`ws://${this.address}:8080/ws`);
+    this.socket = new WebSocket(
+      `ws://${this.online ? this.bojo : "localhost"}:8080/ws`
+    );
 
     // TODO remove Debug
     this.socket.onopen = () => {
