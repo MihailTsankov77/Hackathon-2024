@@ -11,7 +11,6 @@ export class Player {
   constructor(id: number, x: number, y: number, game: Phaser.Scene) {
     this.game = game;
 
-    // TODO ADD ID
     this.unit = new Unit(id, x, y, game, {
       name: "player",
       scale: 0.1,
@@ -33,21 +32,11 @@ export class Player {
     socket.sendLocation(this.unit.sprite.x, this.unit.sprite.y);
   }
 
-  update(socket: SocketConnection) {
+  update(socket: SocketConnection, newScore: number) {
     // TODO: bug when the mouse is not moved for long time
-    this.unit.goto(this.pointer.worldX, this.pointer.worldY);
+    this.unit.goto(this.pointer.worldX, this.pointer.worldY, newScore);
 
     //function to send location to the BE
     this.sendLocation(socket);
-
-    // TODO:
-    // const angle = Phaser.Math.Angle.Between(
-    //   this.unit.sprite.x,
-    //   this.unit.sprite.y,
-    //   this.pointer.worldX,
-    //   this.pointer.worldY
-    // );
-
-    // this.unit.sprite.setRotation(angle);
   }
 }

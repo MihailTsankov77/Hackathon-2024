@@ -56,17 +56,14 @@ export class Bot {
     this.pair = new Pair(this.unit1, this.unit2, this.game);
   }
 
-  updateData = (dataPlayer1: PlayerData, dataPlayer2?: PlayerData) => { 
+  updateData = (dataPlayer1: PlayerData, dataPlayer2?: PlayerData) => {
     this.dataPlayer1 = dataPlayer1;
     this.dataPlayer2 = dataPlayer2;
-    //console.log(dataPlayer1.points);
-    this.unit1.goto(dataPlayer1.x, dataPlayer1.y,dataPlayer1.points);
-    
-//Marti
+    this.unit1.goto(dataPlayer1.x, dataPlayer1.y, dataPlayer1.points);
 
     if (this.unit2 && dataPlayer2) {
       //console.log(dataPlayer2.points);
-      this.unit2.goto(dataPlayer2.x, dataPlayer2.y,dataPlayer2.points);
+      this.unit2.goto(dataPlayer2.x, dataPlayer2.y, dataPlayer2.points);
     }
   };
 
@@ -78,6 +75,7 @@ export class Bot {
     this.unit1.dead();
     return [];
   };
+
   update() {
     if (this.pair) {
       this.pair.update();

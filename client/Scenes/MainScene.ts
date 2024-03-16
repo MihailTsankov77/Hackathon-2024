@@ -1,8 +1,8 @@
 import Phaser from "phaser";
 import { preloadImages } from "../utils/images";
-import { Player } from "../players/player/Player";
 import { Bot } from "../players/units/Bot";
 import { SocketConnection } from "../connection/connectionMain";
+import { PlayerGroup } from "../players/player/PlayerGroup";
 
 // TODO move
 
@@ -11,11 +11,11 @@ export type PlayerData = {
   x: number;
   y: number;
   points: number;
-  cooldown: number
+  cooldown: number;
 };
 
 export default class MainScene extends Phaser.Scene {
-  player: Player;
+  playerGroup: PlayerGroup;
 
   gameWidth = 2000;
   gameHeight = 2000;
@@ -68,7 +68,7 @@ export default class MainScene extends Phaser.Scene {
       0,
       this.gameWidth,
       this.gameHeight,
-      "background",
+      "background"
     );
     background.setOrigin(0, 0);
 
@@ -85,7 +85,17 @@ export default class MainScene extends Phaser.Scene {
 
     this.updateData();
 
-    this.player = new Player(this.playerId, this.playerX, this.playerY, this);
+    this.playerGroup = new PlayerGroup(
+      {
+        id: this.playerId,
+        x: this.playerX,
+        y: this.playerY,
+        points: 0,
+        cooldown: 0,
+      },
+      this
+    );
+
     this.joinServer();
   }
 
@@ -95,7 +105,7 @@ export default class MainScene extends Phaser.Scene {
     switch (method) {
       case "id": {
         this.playerId = parseInt(data);
-        this.player.setId(this.playerId);
+        this.playerGroup.setId(this.playerId);
 
         break;
       }
@@ -121,7 +131,7 @@ export default class MainScene extends Phaser.Scene {
 
   killPlayers() {
     const toBeKilled = Object.keys(this.botsByIds).filter((id) =>
-      this.pairs.every((pair) => id !== this.getPairId(pair)),
+      this.pairs.every((pair) => id !== this.getPairId(pair))
     );
 
     let addIds: number[] = [];
@@ -134,7 +144,19 @@ export default class MainScene extends Phaser.Scene {
     addIds.forEach((id) => this.usePair([id]));
   }
 
+  handlePLayer(ids: number[]) {
+    const plData1 = this.playersData[ids[0]];
+    const plData2 = ids.length > 1 ? this.playersData[ids[1]] : undefined;
+
+    this.playerGroup.updateData(plData1, plData2);
+  }
+
   usePair(ids: number[]) {
+    if (ids.includes(this.playerId)) {
+      this.handlePLayer(ids);
+      return;
+    }
+
     const id = this.getPairId(ids);
 
     const plData1 = this.playersData[ids[0]];
@@ -148,7 +170,7 @@ export default class MainScene extends Phaser.Scene {
   }
 
   update() {
-    this.player.update(this.socket);
+    this.playerGroup.update(this.socket);
 
     Object.values(this.botsByIds).forEach((bot) => bot.update());
 
