@@ -12,6 +12,11 @@ var heartBeates = 0
 
 var HeartbeatTicker = time.NewTicker(20 * time.Millisecond)
 
+type HeartbeatResponse struct {
+	Players     []Player `json:"players"`
+	Connections [][]int  `json:"connections"`
+}
+
 func heartbeat() {
 	if len(players) == 0 {
 		return
@@ -23,13 +28,24 @@ func heartbeat() {
 		updatePlayers()
 	}
 
-	playersJson, err := json.Marshal(maps.Values(players))
+	response := HeartbeatResponse{
+		Players:     maps.Values(players),
+		Connections: playerConnections,
+	}
+
+	for _, player := range response.Players {
+		if isPlayerSolo(player) {
+			response.Connections = append(response.Connections, []int{player.Id})
+		}
+	}
+
+	responseJson, err := json.Marshal(response)
 	if err != nil {
 		fmt.Println("Failed to marshal players:", err)
 		return
 	}
 
-	Manager.Broadcast <- []byte(fmt.Sprintf("heartbeat %s", playersJson))
+	Manager.Broadcast <- []byte(fmt.Sprintf("heartbeat %s", responseJson))
 }
 
 func HandleHeartbeat() {
