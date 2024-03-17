@@ -15,7 +15,7 @@ export type PlayerData = {
   cooldown: number;
 };
 
-const mock = true;
+const mock = false;
 
 const MockPos: Record<number, PlayerData> = {
   1: {
