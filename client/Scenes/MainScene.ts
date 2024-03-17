@@ -247,7 +247,7 @@ export default class MainScene extends Phaser.Scene {
       return;
     }
 
-    if (scoreGroupOne > scoreGroupTwo) {
+    if (scoreGroupOne * groupOne.length > scoreGroupTwo * groupTwo.length) {
       this.socket.sendCollision({
         winners: groupOne,
         losers: groupTwo,
