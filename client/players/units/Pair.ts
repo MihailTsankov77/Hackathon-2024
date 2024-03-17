@@ -39,16 +39,17 @@ export class Pair {
 
   MaxDistance = 800;
 
-  constructor(unit1: Unit, unit2: Unit, game: Phaser.Scene) {
+  constructor(unit1: Unit, unit2: Unit, hand: Sprite, game: Phaser.Scene) {
     this.game = game;
 
     this.unit1 = unit1;
     this.unit2 = unit2;
 
-    this.hand = this.game.physics.add.sprite(
-      ...this.getCenterBetweenUnits(),
-      "hand"
-    );
+    this.hand = hand;
+    const coords = this.getCenterBetweenUnits();
+
+    hand.x = coords[0];
+    hand.y = coords[1];
   }
 
   getCenterBetweenUnits(): [number, number] {

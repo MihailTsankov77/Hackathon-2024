@@ -34,7 +34,9 @@ export class PlayerGroup {
           scale: 0.1,
         });
 
-        this.pair = new Pair(this.player.unit, this.unit2, this.game);
+        const hand = this.game.physics.add.sprite(0, 0, "hand");
+
+        this.pair = new Pair(this.player.unit, this.unit2, hand, this.game);
       } else {
         this.unit2.goto(plData2.x, plData2.y, plData2.points, plData2.cooldown);
       }
