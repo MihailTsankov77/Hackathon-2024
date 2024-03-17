@@ -25,9 +25,7 @@ export class Unit {
 
     this.id = id;
 
-    this.sprite = this.game.physics.add.sprite(x, y, spriteConfig.name);
-    this.sprite.setScale(spriteConfig.scale);
-    this.sprite.setCollideWorldBounds(true);
+    this.sprite = createSprite(x, y, spriteConfig, game);
     this.score = new Score(x + 40, y, game);
   }
 
@@ -50,4 +48,17 @@ export class Unit {
     this.score.digitsText.setPosition(this.sprite.x - 17, this.sprite.y - 100);
     this.score.update(newScore);
   }
+}
+
+export function createSprite(
+  x,
+  y,
+  spriteConfig: SpriteConfig,
+  game: Phaser.Scene
+) {
+  const sprite = game.physics.add.sprite(x, y, spriteConfig.name);
+  sprite.setScale(spriteConfig.scale);
+  sprite.setCollideWorldBounds(true);
+
+  return sprite;
 }

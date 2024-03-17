@@ -1,7 +1,7 @@
 import { SocketConnection } from "../../connection/connectionMain";
 import { PlayerData } from "../../Scenes/MainScene";
 import { Pair } from "../units/Pair";
-import { Unit } from "../units/Unit";
+import { createSprite, Unit } from "../units/Unit";
 import { Player } from "./Player";
 
 export class PlayerGroup {
@@ -29,8 +29,22 @@ export class PlayerGroup {
 
     if (plData2) {
       if (!this.unit2) {
+        const oldSprite = this.player.unit.sprite;
+
+        this.player.unit.sprite = createSprite(
+          oldSprite.x,
+          oldSprite.y,
+          {
+            name: "player-glow",
+            scale: 0.15,
+          },
+          this.game
+        );
+        this.game.cameras.main.startFollow(this.player.unit.sprite, true);
+        oldSprite.destroy();
+
         this.unit2 = new Unit(plData2.id, plData2.x, plData2.y, this.game, {
-          name: "slavi",
+          name: "slavi-glow",
           scale: 0.1,
         });
 
@@ -38,8 +52,24 @@ export class PlayerGroup {
       } else {
         this.unit2.goto(plData2.x, plData2.y, plData2.points, plData2.cooldown);
       }
-    } else {
+    } else if (this.pair) {
       this.pair?.splitForPlayer();
+
+      const oldSprite = this.player.unit.sprite;
+
+      this.player.unit.sprite = createSprite(
+        oldSprite.x,
+        oldSprite.y,
+        {
+          name: "player",
+          scale: 0.1,
+        },
+        this.game
+      );
+      this.game.cameras.main.startFollow(this.player.unit.sprite, true);
+
+      oldSprite.destroy();
+
       this.unit2 = undefined;
       this.pair = undefined;
     }
