@@ -115,6 +115,7 @@ export default class MainScene extends Phaser.Scene {
       "background"
     );
     background.setOrigin(0, 0);
+    background.setDepth(-10000);
 
     this.physics.world.setBounds(0, 0, this.gameWidth, this.gameHeight);
   }
