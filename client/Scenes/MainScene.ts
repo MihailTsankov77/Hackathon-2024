@@ -309,7 +309,7 @@ export default class MainScene extends Phaser.Scene {
           this.playerGroup.player.unit.sprite
         ),
       }))
-      .filter((dt) => dt.distance > 120);
+      .filter((dt) => dt.distance < 220);
 
     if (arr.length === 0) {
       return;
