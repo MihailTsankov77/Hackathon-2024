@@ -141,7 +141,7 @@ func handleCommands(conn *websocket.Conn, message []byte) {
 		slog.Info(fmt.Sprintf("Number of players: %d", len(players.Values)))
 		Manager.Clients[conn] = player.Id
 		err = conn.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("id %d", player.Id)))
-		slog.Debug(
+		slog.Info(
 			fmt.Sprintf(
 				"Sending id %d to: %d - %v",
 				player.Id,
