@@ -37,7 +37,7 @@ export class Pair {
   unit2: Unit;
   hand: Sprite;
 
-  MaxDistance = 800;
+  MaxDistance = 500;
 
   constructor(unit1: Unit, unit2: Unit, game: Phaser.Scene) {
     this.game = game;
@@ -49,6 +49,8 @@ export class Pair {
       ...this.getCenterBetweenUnits(),
       "hand"
     );
+
+    this.hand.setDepth(-5);
   }
 
   getCenterBetweenUnits(): [number, number] {
@@ -179,7 +181,7 @@ export class Pair {
     }
 
     this.playSplitAnimation();
-    this.unit1.SPEED -= 10;
+    // this.unit1.SPEED += 10;
 
     if (this.unit1.id > this.unit2.id) {
       socket.sendDisconnect(this.unit1.id, this.unit2.id, true);

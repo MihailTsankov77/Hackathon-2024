@@ -36,7 +36,7 @@ export class Bot {
       this.dataPlayer1.y,
       this.game,
       {
-        name: "slavi",
+        name: `slavi${!!this.dataPlayer2 ? "-glow" : ""}`,
         scale: 0.1,
       }
     );
@@ -51,7 +51,7 @@ export class Bot {
       this.dataPlayer2.y,
       this.game,
       {
-        name: "slavi",
+        name: "slavi-glow",
         scale: 0.1,
       }
     );
