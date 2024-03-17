@@ -20,7 +20,7 @@ export class Bot {
   constructor(
     dataPlayer1: PlayerData,
     dataPlayer2: PlayerData | undefined,
-    game: Phaser.Scene,
+    game: Phaser.Scene
   ) {
     this.game = game;
 
@@ -37,8 +37,8 @@ export class Bot {
       this.game,
       {
         name: "slavi",
-        scale: 0.5,
-      },
+        scale: 0.1,
+      }
     );
 
     if (!this.dataPlayer2) {
@@ -52,8 +52,8 @@ export class Bot {
       this.game,
       {
         name: "slavi",
-        scale: 0.5,
-      },
+        scale: 0.1,
+      }
     );
 
     this.pair = new Pair(this.unit1, this.unit2, this.game);
@@ -66,7 +66,7 @@ export class Bot {
       dataPlayer1.x,
       dataPlayer1.y,
       dataPlayer1.points,
-      dataPlayer1.cooldown,
+      dataPlayer1.cooldown
     );
 
     if (this.unit2 && dataPlayer2) {
@@ -75,7 +75,7 @@ export class Bot {
         dataPlayer2.x,
         dataPlayer2.y,
         dataPlayer2.points,
-        dataPlayer2.cooldown,
+        dataPlayer2.cooldown
       );
     }
   };
@@ -107,14 +107,14 @@ export class Bot {
     this.game.physics.add.collider(
       playerGroup.player.unit.sprite,
       this.unit1.sprite,
-      this.collideFunction,
+      this.collideFunction
     );
 
     if (this.unit2) {
       this.game.physics.add.collider(
         playerGroup.player.unit.sprite,
         this.unit2.sprite,
-        this.collideFunction,
+        this.collideFunction
       );
     }
 
@@ -122,14 +122,14 @@ export class Bot {
       this.game.physics.add.collider(
         playerGroup.unit2.sprite,
         this.unit1.sprite,
-        this.collideFunction,
+        this.collideFunction
       );
 
       if (this.unit2) {
         this.game.physics.add.collider(
           playerGroup.unit2.sprite,
           this.unit2.sprite,
-          this.collideFunction,
+          this.collideFunction
         );
       }
     }

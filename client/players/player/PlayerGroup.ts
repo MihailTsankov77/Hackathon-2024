@@ -31,7 +31,7 @@ export class PlayerGroup {
       if (!this.unit2) {
         this.unit2 = new Unit(plData2.id, plData2.x, plData2.y, this.game, {
           name: "slavi",
-          scale: 0.5,
+          scale: 0.1,
         });
 
         this.pair = new Pair(this.player.unit, this.unit2, this.game);
@@ -39,7 +39,7 @@ export class PlayerGroup {
         this.unit2.goto(plData2.x, plData2.y, plData2.points, plData2.cooldown);
       }
     } else {
-      this.pair?.playSplitAnimation();
+      this.pair?.splitForPlayer();
       this.unit2 = undefined;
       this.pair = undefined;
     }

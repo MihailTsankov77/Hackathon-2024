@@ -16,7 +16,7 @@ export type PlayerData = {
   cooldown: number;
 };
 
-const mock = true;
+const mock = false;
 
 const MockPos: Record<number, PlayerData> = {
   1: {
@@ -118,7 +118,7 @@ export default class MainScene extends Phaser.Scene {
       0,
       this.gameWidth,
       this.gameHeight,
-      "background",
+      "background"
     );
     background.setOrigin(0, 0);
 
@@ -141,7 +141,7 @@ export default class MainScene extends Phaser.Scene {
         points: 0,
         cooldown: 0,
       },
-      this,
+      this
     );
 
     this.updateData();
@@ -197,7 +197,7 @@ export default class MainScene extends Phaser.Scene {
 
   killPlayers() {
     const toBeKilled = Object.keys(this.botsByIds).filter((id) =>
-      this.pairs.every((pair) => id !== this.getPairId(pair)),
+      this.pairs.every((pair) => id !== this.getPairId(pair))
     );
 
     let addIds: number[] = [];
@@ -238,7 +238,7 @@ export default class MainScene extends Phaser.Scene {
 
       this.botsByIds[id].addCollisionWithAPlayer(
         this.playerGroup,
-        this.checkWinLose,
+        this.checkWinLose
       );
     }
   }
@@ -246,11 +246,11 @@ export default class MainScene extends Phaser.Scene {
   checkWinLose = (groupOne: number[], groupTwo: number[]) => {
     const scoreGroupOne = groupOne.reduce(
       (acc, id) => acc + this.playersData[id].points,
-      0,
+      0
     );
     const scoreGroupTwo = groupTwo.reduce(
       (acc, id) => acc + this.playersData[id].points,
-      0,
+      0
     );
 
     const sender = Math.min(...groupOne.concat(groupTwo));
@@ -259,7 +259,7 @@ export default class MainScene extends Phaser.Scene {
       return;
     }
 
-    if (scoreGroupOne > scoreGroupTwo) {
+    if (scoreGroupOne * groupOne.length > scoreGroupTwo * groupTwo.length) {
       this.socket.sendCollision({
         winners: groupOne,
         losers: groupTwo,
@@ -278,35 +278,54 @@ export default class MainScene extends Phaser.Scene {
     }
 
     const spaceBar = this.input.keyboard.addKey(
-      Phaser.Input.Keyboard.KeyCodes.SPACE,
+      Phaser.Input.Keyboard.KeyCodes.SPACE
     );
 
     spaceBar.on("down", () => {
+      if (this.playerGroup.cooldown > 0) {
+        return;
+      }
+
       if (this.playerGroup.pair) {
-        this.playerGroup.pair?.playSplitAnimation();
+        this.playerGroup.pair?.splitForPlayer();
 
         this.socket.sendDisconnect(
           this.playerGroup.player.unit.id,
           this.playerGroup.unit2?.id ?? 0,
-          false,
+          false
         );
+        this.playerGroup.player.SPEED += 10;
+        this.playerGroup.unit2!.SPEED += 10;
         return;
       }
 
-      this.socket.connect(this.playerGroup.player.unit.id, this.getClosest());
+      this.playerGroup.player.SPEED -= 10;
+
+      const id = this.getClosest();
+
+      if (id === undefined) {
+        return;
+      }
+
+      this.socket.connect(this.playerGroup.player.unit.id, id);
     });
   }
 
-  getClosest = (): number => {
+  getClosest = (): number | undefined => {
     const arr = Object.values(this.botsByIds)
       .filter((bot) => !bot.pair)
       .map((bot) => ({
         id: bot.unit1.id,
         distance: getDistance(
           bot.unit1.sprite,
-          this.playerGroup.player.unit.sprite,
+          this.playerGroup.player.unit.sprite
         ),
-      }));
+      }))
+      .filter((dt) => dt.distance < 220);
+
+    if (arr.length === 0) {
+      return;
+    }
 
     let minIndex = 0;
 
@@ -336,7 +355,7 @@ export default class MainScene extends Phaser.Scene {
     this.leaderboard.leaderboardText.setText(this.leaderboard.getAsStr());
 
     Object.values(this.botsByIds).forEach((bot) =>
-      bot.update(this.playerGroup),
+      bot.update(this.playerGroup)
     );
   }
 }
