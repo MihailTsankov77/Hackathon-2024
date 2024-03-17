@@ -143,7 +143,6 @@ export default class MainScene extends Phaser.Scene {
     this.joinServer();
     this.timer = new Timer(10, this.cameras.main.height - 85, this);
 
-    // this.timer.timeText.setOrigin(0.5, 0.5);
     this.timer.timeText.setScrollFactor(0);
 
     this.addListener();
@@ -247,7 +246,7 @@ export default class MainScene extends Phaser.Scene {
       return;
     }
 
-    if (scoreGroupOne > scoreGroupTwo) {
+    if (scoreGroupOne * groupOne.length > scoreGroupTwo * groupTwo.length) {
       this.socket.sendCollision({
         winners: groupOne,
         losers: groupTwo,
@@ -309,7 +308,7 @@ export default class MainScene extends Phaser.Scene {
           this.playerGroup.player.unit.sprite
         ),
       }))
-      .filter((dt) => dt.distance > 120);
+      .filter((dt) => dt.distance < 200);
 
     if (arr.length === 0) {
       return;

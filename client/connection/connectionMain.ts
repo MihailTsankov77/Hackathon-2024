@@ -70,7 +70,6 @@ export class SocketConnection {
     if (this.socket.readyState == WebSocket.OPEN) {
       this.socket.send(`collision ${JSON.stringify(event)}`);
     }
-    // console.log(event);
   }, 1000);
 
   update(x: number, y: number) {
