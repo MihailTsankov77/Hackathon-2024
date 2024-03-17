@@ -104,7 +104,7 @@ func leaderboardUpdate(players []Player) []Player {
 
 func handleCommands(conn *websocket.Conn, message []byte) {
 	cmd := strings.SplitN(string(message), " ", 2)
-	slog.Debug(
+	slog.Info(
 		fmt.Sprintf(
 			"Received command %s from: %d - %v",
 			cmd[0],
@@ -138,7 +138,7 @@ func handleCommands(conn *websocket.Conn, message []byte) {
 		players.mutex.Lock()
 
 		players.Values[player.Id] = player
-		slog.Debug(fmt.Sprintf("Number of players: %d", len(players.Values)))
+		slog.Info(fmt.Sprintf("Number of players: %d", len(players.Values)))
 		Manager.Clients[conn] = player.Id
 		err = conn.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("id %d", player.Id)))
 		slog.Debug(
