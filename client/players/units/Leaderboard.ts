@@ -18,18 +18,18 @@ export class Leaderboard {
     }
 
     leaderboardS(id: number, score: number) {
-        this.leaderBoard = [];
+       
         this.leaderBoard.push({id, score});
         console.log("Getting leaderboard with length", this.leaderBoard.length);
         
     }
 
-    getAsStr(): string {
-        let str = ""
+    getAsStr(): string[] {
+        const str : string[] = [];
         this.leaderBoard.forEach(el => {
-            str += `${el.id}-${el.score}\n`
+            str.push(`${el.id}-${el.score}`)
         })
-        return str;
+        return str.reverse();
     }
     
 

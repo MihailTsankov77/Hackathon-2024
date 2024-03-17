@@ -179,8 +179,10 @@ export default class MainScene extends Phaser.Scene {
       }
       case "leaderboard": {
         const parsed = JSON.parse(data);
+        console.log(parsed.length)
+        this.leaderboard.leaderBoard = [];
         parsed.forEach(pData => {
-          this.leaderboard.leaderboardS(pData.id as unknown as number, pData.score as unknown as number)
+          this.leaderboard.leaderboardS(pData.id as unknown as number, pData.points as unknown as number)
         });
       }
     }
@@ -344,7 +346,7 @@ export default class MainScene extends Phaser.Scene {
 
     this.elapsedTime += delta;
 
-    if (this.elapsedTime >= 5000) { // 5000 milliseconds = 5 seconds
+    if (this.elapsedTime >= 2000) { // 5000 milliseconds = 5 seconds
       this.elapsedTime = 0; // Reset the timer if you want the event to be repeated
       this.socket.getLeaderboard();
     }
@@ -352,8 +354,9 @@ export default class MainScene extends Phaser.Scene {
     this.playerGroup.update(this.socket);
 
     this.timer.timeText.setText(this.playerGroup.player.unit.timer.toString());
-    this.leaderboard.leaderboardText.setText(this.leaderboard.getAsStr());
-
+    this.leaderboard.leaderboardText.setText(this.leaderboard.getAsStr().join('\n'));
+    this.leaderboard.leaderboardText.setFixedSize(200,this.leaderboard.leaderBoard.length*(this.cameras.main.height - 100));
+    
     Object.values(this.botsByIds).forEach((bot) =>
       bot.update(this.playerGroup)
     );
