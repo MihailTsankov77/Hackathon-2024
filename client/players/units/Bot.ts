@@ -30,6 +30,8 @@ export class Bot {
   }
 
   createUnits() {
+    const hand = this.game.physics.add.sprite(0, 0, "hand");
+
     this.unit1 = new Unit(
       this.dataPlayer1.id,
       this.dataPlayer1.x,
@@ -56,7 +58,7 @@ export class Bot {
       }
     );
 
-    this.pair = new Pair(this.unit1, this.unit2, this.game);
+    this.pair = new Pair(this.unit1, this.unit2, hand, this.game);
   }
 
   updateData = (dataPlayer1: PlayerData, dataPlayer2?: PlayerData) => {
