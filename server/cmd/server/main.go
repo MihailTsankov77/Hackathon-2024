@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log/slog"
 	"net/http"
 
 	"github.com/MihailTsankov77/Hackathon-2024/server/internal"
@@ -13,8 +13,8 @@ func main() {
 
 	go internal.HandleHeartbeat()
 
-	fmt.Println("Starting WebSocket server on :8080")
+	slog.Info("Starting WebSocket server on :8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
-		fmt.Printf("Failed to start server: %v\n", err)
+		slog.Error("Failed to start server: %v\n", err)
 	}
 }

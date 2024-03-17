@@ -3,6 +3,7 @@ package internal
 import (
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"sort"
 	"strconv"
 	"strings"
@@ -107,17 +108,18 @@ func leaderboardUpdate(players []Player) []Player {
 
 func handleCommands(conn *websocket.Conn, message []byte) {
 	cmd := strings.SplitN(string(message), " ", 2)
+	slog.Debug("Received command:", cmd[0], "from:", conn.RemoteAddr())
 	if cmd[0] == "join" {
 		data := strings.Split(cmd[1], " ")
 		pX, err := strconv.ParseFloat(data[0], 64)
 		if err != nil {
-			fmt.Println("Failed to convert position:", err)
+			slog.Error("Failed to convert position:", err)
 			return
 		}
 
 		pY, err := strconv.ParseFloat(data[1], 64)
 		if err != nil {
-			fmt.Println("Failed to convert position:", err)
+			slog.Error("Failed to convert position:", err)
 			return
 		}
 
@@ -131,11 +133,12 @@ func handleCommands(conn *websocket.Conn, message []byte) {
 		playerIdCounter++
 
 		players.Values[player.Id] = player
-		fmt.Println("Number of players:", len(players.Values))
+		slog.Debug("Number of players:", len(players.Values))
 		Manager.Clients[conn] = player.Id
 		err = conn.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("id %d", player.Id)))
+		slog.Debug("Wrote:", player.Id)
 		if err != nil {
-			fmt.Println("Failed to write message:", err)
+			slog.Error("Failed to write message:", err)
 		}
 	} else if cmd[0] == "move" {
 		data := strings.Split(cmd[1], " ")
@@ -144,13 +147,13 @@ func handleCommands(conn *websocket.Conn, message []byte) {
 
 		pX, err := strconv.ParseFloat(data[0], 64)
 		if err != nil {
-			fmt.Println("Failed to convert position:", err)
+			slog.Error("Failed to convert position:", err)
 			return
 		}
 
 		pY, err := strconv.ParseFloat(data[1], 64)
 		if err != nil {
-			fmt.Println("Failed to convert position:", err)
+			slog.Error("Failed to convert position:", err)
 			return
 		}
 
