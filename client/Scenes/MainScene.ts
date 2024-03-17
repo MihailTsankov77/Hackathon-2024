@@ -60,8 +60,8 @@ const MockPair = [[1, 2], [3], [6]];
 export default class MainScene extends Phaser.Scene {
   playerGroup: PlayerGroup;
 
-  gameWidth = 2000;
-  gameHeight = 2000;
+  gameWidth = 5000;
+  gameHeight = 5000;
 
   playerX = 0;
   playerY = 0;
