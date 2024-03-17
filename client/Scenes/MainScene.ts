@@ -218,6 +218,10 @@ export default class MainScene extends Phaser.Scene {
     const plData1 = this.playersData[ids[0]];
     const plData2 = ids.length > 1 ? this.playersData[ids[1]] : undefined;
 
+    if (!plData1) {
+      return;
+    }
+
     if (this.botsByIds[id]) {
       this.botsByIds[id].updateData(plData1, plData2);
     } else {
@@ -281,17 +285,17 @@ export default class MainScene extends Phaser.Scene {
           this.playerGroup.unit2?.id ?? 0,
           false
         );
-        this.playerGroup.player.unit.SPEED += 10;
+        // this.playerGroup.player.unit.SPEED += 10;
         return;
       }
-
-      this.playerGroup.player.unit.SPEED -= 10;
 
       const id = this.getClosest();
 
       if (id === undefined) {
         return;
       }
+
+      // this.playerGroup.player.unit.SPEED -= 10;
 
       this.socket.connect(this.playerGroup.player.unit.id, id);
     });
