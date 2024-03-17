@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "startCl": "parcel client/main/index.html -p 8000",
-    "startServer": "cd server/ && nodemon --exec \"go run\" cmd/server/main.go && cd ../"
+    "startServer": "cd server/ && nodemon --exec \"go run\" cmd/server/main.go && cd ../",
+    "buildAndRunServer": "cd server/ && go build -o ./build/main cmd/server/main.go && ./build/main && cd ../",
+    "buildServer": "cd server/ && go build -o ./build/main cmd/server/main.go",
+    "runServer": "./server/build/main"
   },
   "keywords": [],
   "author": "",
