@@ -21,6 +21,12 @@ func (manager *ClientManager) Start() {
 			manager.Clients[conn] = -1
 			slog.Info(fmt.Sprintf("Registered client: %v\n", conn.RemoteAddr()))
 		case conn := <-manager.Unregister:
+			for i, connection := range playerConnections {
+				if connection[0] == manager.Clients[conn] ||
+					connection[1] == manager.Clients[conn] {
+					playerConnections = append(playerConnections[:i], playerConnections[i+1:]...)
+				}
+			}
 			delete(players.Values, manager.Clients[conn])
 			delete(manager.Clients, conn)
 			conn.Close()
