@@ -36,7 +36,7 @@ export class PlayerGroup {
           oldSprite.y,
           {
             name: "player-glow",
-            scale: 0.15,
+            scale: 0.1,
           },
           this.game
         );

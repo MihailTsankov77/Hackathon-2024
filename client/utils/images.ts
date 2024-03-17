@@ -3,7 +3,7 @@ import Phaser from "phaser";
 export function preloadImages(game: Phaser.Scene) {
   game.load.image("player", "player.png");
   game.load.image("player-glow", "player-glow.png");
-  game.load.image("slavi", "player_1.png");
+  game.load.image("slavi", "player-green.png");
   game.load.image("slavi-glow", "player-green-glow.png");
   game.load.image("background", "grid.png");
   game.load.image("hand", "hands.png");
