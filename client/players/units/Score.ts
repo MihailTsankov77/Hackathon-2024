@@ -13,6 +13,8 @@ export class Score {
       fontSize: 22,
       fontStyle: "bold",
     });
+    
+    this.digitsText.setDepth(1000); 
   }
 
   update(newScore: number) {

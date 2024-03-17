@@ -26,7 +26,7 @@ export class Unit {
     this.id = id;
 
     this.sprite = createSprite(x, y, spriteConfig, game);
-    this.score = new Score(x + 40, y, game);
+    this.score = new Score(x + 40, y-8, game);
   }
 
   dead() {
@@ -45,7 +45,7 @@ export class Unit {
     //this.game.physics.moveToObject(this.score.digitsSprite, { x, y:y-60 }, this.SPEED);
     //this.game.physics.moveToObject(this.score.digitsText,{ x, y:y-60 }, this.SPEED);
     this.timer = newTimer;
-    this.score.digitsText.setPosition(this.sprite.x - 17, this.sprite.y - 100);
+    this.score.digitsText.setPosition(this.sprite.x - 17, this.sprite.y - 106);
     this.score.update(newScore);
   }
 }
