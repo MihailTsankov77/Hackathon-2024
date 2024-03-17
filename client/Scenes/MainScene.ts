@@ -286,7 +286,7 @@ export default class MainScene extends Phaser.Scene {
           this.playerGroup.unit2?.id ?? 0,
           false
         );
-        // this.playerGroup.player.unit.SPEED += 10;
+
         return;
       }
 
@@ -295,8 +295,6 @@ export default class MainScene extends Phaser.Scene {
       if (id === undefined) {
         return;
       }
-
-      // this.playerGroup.player.unit.SPEED -= 10;
 
       this.socket.connect(this.playerGroup.player.unit.id, id);
     });

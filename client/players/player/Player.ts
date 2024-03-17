@@ -32,7 +32,6 @@ export class Player {
   }
 
   update(socket: SocketConnection, newScore: number, newTimer: number) {
-    // TODO: bug when the mouse is not moved for long time
     this.unit.goto(
       this.pointer.worldX,
       this.pointer.worldY,
