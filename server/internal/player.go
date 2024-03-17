@@ -91,7 +91,7 @@ func (a ByPoints) Len() int {
 }
 
 func (a ByPoints) Less(i, j int) bool {
-	return a[i].Points > a[j].Points
+	return a[i].Points < a[j].Points
 }
 
 func (a ByPoints) Swap(i, j int) {
@@ -207,12 +207,12 @@ func handleCommands(conn *websocket.Conn, message []byte) {
 				Cooldown: 0,
 			}
 		} else {
-			for _, winnerId := range battle.Winners {
+			for i, winnerId := range battle.Winners {
 				players.Values[winnerId] = Player{
-					Id:       players.Values[battle.Winners[0]].Id,
-					X:        players.Values[battle.Winners[0]].X,
-					Y:        players.Values[battle.Winners[0]].Y,
-					Points:   players.Values[battle.Winners[0]].Points + (loserPoints / 2),
+					Id:       players.Values[battle.Winners[i]].Id,
+					X:        players.Values[battle.Winners[i]].X,
+					Y:        players.Values[battle.Winners[i]].Y,
+					Points:   players.Values[battle.Winners[i]].Points + (loserPoints / 2),
 					Cooldown: 0,
 				}
 			}
@@ -253,7 +253,7 @@ func handleCommands(conn *websocket.Conn, message []byte) {
 
 		for i, connection := range playerConnections {
 			if connection[0] == playerId1 || connection[0] == playerId2 {
-				playerConnections = append(playerConnections[:i], playerConnections[(i+1):]...)
+				playerConnections = playerConnections[:i+copy(playerConnections[i:], playerConnections[i+1:])]
 			}
 		}
 
@@ -283,7 +283,7 @@ func handleCommands(conn *websocket.Conn, message []byte) {
 			fmt.Println("Failed to marshal leaderboard:", err)
 			return
 		}
-		conn.WriteMessage(1, jsonRes)
+		conn.WriteMessage(1, []byte(fmt.Sprintf("leaderboard %s", jsonRes)))
 	}
 }
 

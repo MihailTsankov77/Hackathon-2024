@@ -36,8 +36,8 @@ func heartbeat() {
 			response.Connections = append(response.Connections, []int{player.Id})
 		}
 	}
-
-	responseJson, err := json.Marshal(response)
+	resCopy := response
+	responseJson, err := json.Marshal(resCopy)
 	if err != nil {
 		fmt.Println("Failed to marshal players:", err)
 		return
