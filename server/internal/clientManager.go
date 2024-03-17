@@ -2,6 +2,7 @@ package internal
 
 import (
 	"fmt"
+	"log/slog"
 
 	"github.com/gorilla/websocket"
 )
@@ -18,16 +19,24 @@ func (manager *ClientManager) Start() {
 		select {
 		case conn := <-manager.Register:
 			manager.Clients[conn] = -1
+			slog.Info(fmt.Sprintf("Registered client: %v\n", conn.RemoteAddr()))
 		case conn := <-manager.Unregister:
+			for i, connection := range playerConnections {
+				if connection[0] == manager.Clients[conn] ||
+					connection[1] == manager.Clients[conn] {
+					playerConnections = append(playerConnections[:i], playerConnections[i+1:]...)
+				}
+			}
 			delete(players.Values, manager.Clients[conn])
 			delete(manager.Clients, conn)
 			conn.Close()
-			fmt.Println("Unregistering client")
+			slog.Info(fmt.Sprintf("Unregitered client: %v\n", conn.RemoteAddr()))
 		case message := <-manager.Broadcast:
+			slog.Debug(fmt.Sprintf("Broadcasting message: %s", string(message)))
 			for conn := range manager.Clients {
 				err := conn.WriteMessage(websocket.TextMessage, message)
 				if err != nil {
-					fmt.Printf("Websocket error: %s\n", err)
+					slog.Error(fmt.Sprintf("Failed to write message: %v", err))
 					conn.Close()
 					delete(manager.Clients, conn)
 				}
