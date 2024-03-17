@@ -236,7 +236,6 @@ export default class MainScene extends Phaser.Scene {
   }
 
   checkWinLose = (groupOne: number[], groupTwo: number[]) => {
-    console.log(groupOne, groupTwo);
     const scoreGroupOne = groupOne.reduce(
       (acc, id) => acc + this.playersData[id].points,
       0
