@@ -4,6 +4,7 @@ import { Bot } from "../players/units/Bot";
 import { SocketConnection } from "../connection/connectionMain";
 import { PlayerGroup } from "../players/player/PlayerGroup";
 import { Timer } from "../players/units/Timer";
+import { Leaderboard } from "../players/units/Leaderboard";
 
 export type CollideFun = (group1: number[], group2: number[]) => void;
 
@@ -76,13 +77,18 @@ export default class MainScene extends Phaser.Scene {
 
   timer: Timer;
 
+  leaderboard: Leaderboard;
+
+  elapsedTime: number;
+
   constructor() {
     super("MainScene");
     this.playerX = mock ? 800 : this.getRandomWidth();
     this.playerY = mock ? 500 : this.getRandomHight();
+    this.elapsedTime = 0;
   }
 
-  init() {}
+  init() { }
 
   preload() {
     preloadImages(this);
@@ -126,7 +132,7 @@ export default class MainScene extends Phaser.Scene {
 
   create() {
     this.setUpCameraAndBackground();
-
+    this.leaderboard = new Leaderboard(0, 0, this);
     this.playerGroup = new PlayerGroup(
       {
         id: this.playerId,
@@ -145,13 +151,13 @@ export default class MainScene extends Phaser.Scene {
 
     // this.timer.timeText.setOrigin(0.5, 0.5);
     this.timer.timeText.setScrollFactor(0);
-
+    this.leaderboard = new Leaderboard(this.cameras.main.width - 200,100,this);
+    this.leaderboard.leaderboardText.setScrollFactor(0);
     this.addListener();
   }
 
   handleMessage = (rawData: string) => {
-    const [method, data] = rawData.split(" ");
-
+    const [method, data] = rawData.split(" ", 2);
     switch (method) {
       case "id": {
         this.playerId = parseInt(data);
@@ -170,6 +176,12 @@ export default class MainScene extends Phaser.Scene {
       case "die": {
         this.playerGroup.player.dead();
         this.socket.disconnect();
+      }
+      case "leaderboard": {
+        const parsed = JSON.parse(data);
+        parsed.forEach(pData => {
+          this.leaderboard.leaderboardS(pData.id as unknown as number, pData.score as unknown as number)
+        });
       }
     }
   };
@@ -309,10 +321,19 @@ export default class MainScene extends Phaser.Scene {
     return arr[minIndex].id;
   };
 
-  update() {
+  update(time: number, delta: number) {
+
+    this.elapsedTime += delta;
+
+    if (this.elapsedTime >= 5000) { // 5000 milliseconds = 5 seconds
+      this.elapsedTime = 0; // Reset the timer if you want the event to be repeated
+      this.socket.getLeaderboard();
+    }
+
     this.playerGroup.update(this.socket);
 
     this.timer.timeText.setText(this.playerGroup.player.unit.timer.toString());
+    this.leaderboard.leaderboardText.setText(this.leaderboard.getAsStr());
 
     Object.values(this.botsByIds).forEach((bot) =>
       bot.update(this.playerGroup),

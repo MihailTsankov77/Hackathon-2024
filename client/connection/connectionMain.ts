@@ -13,7 +13,7 @@ export class SocketConnection {
   socket: WebSocket;
   debug = false;
 
-  online = false;
+  online = true;
   bojo = "10.108.5.150";
 
   constructor(x: number, y: number) {
@@ -49,8 +49,14 @@ export class SocketConnection {
       this.socket.send(`join ${x} ${y}`);
     }
   };
-
-  sendLocation(x: number, y: number) {
+   
+  getLeaderboard(){
+    if (this.socket.readyState == WebSocket.OPEN) {
+      this.socket.send(`leaderboard`);
+    }
+   }
+  
+   sendLocation(x: number, y: number) {
     if (this.socket.readyState == WebSocket.OPEN) {
       this.socket.send(`move ${x} ${y}`);
     }

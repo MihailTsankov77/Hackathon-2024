@@ -283,7 +283,7 @@ func handleCommands(conn *websocket.Conn, message []byte) {
 			fmt.Println("Failed to marshal leaderboard:", err)
 			return
 		}
-		conn.WriteMessage(1, jsonRes)
+		conn.WriteMessage(1, []byte(fmt.Sprintf("leaderboard %s", jsonRes)))
 	}
 }
 
