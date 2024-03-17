@@ -60,8 +60,8 @@ const MockPair = [[1, 2], [3], [6]];
 export default class MainScene extends Phaser.Scene {
   playerGroup: PlayerGroup;
 
-  gameWidth = 2000;
-  gameHeight = 2000;
+  gameWidth = 5000;
+  gameHeight = 5000;
 
   playerX = 0;
   playerY = 0;
@@ -236,6 +236,7 @@ export default class MainScene extends Phaser.Scene {
   }
 
   checkWinLose = (groupOne: number[], groupTwo: number[]) => {
+    console.log(groupOne, groupTwo);
     const scoreGroupOne = groupOne.reduce(
       (acc, id) => acc + this.playersData[id].points,
       0
@@ -286,7 +287,7 @@ export default class MainScene extends Phaser.Scene {
           this.playerGroup.unit2?.id ?? 0,
           false
         );
-        // this.playerGroup.player.unit.SPEED += 10;
+
         return;
       }
 
@@ -295,8 +296,6 @@ export default class MainScene extends Phaser.Scene {
       if (id === undefined) {
         return;
       }
-
-      // this.playerGroup.player.unit.SPEED -= 10;
 
       this.socket.connect(this.playerGroup.player.unit.id, id);
     });

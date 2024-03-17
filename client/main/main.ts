@@ -4,8 +4,8 @@ import GameOver from "../Scenes/GameOverScene";
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.CANVAS,
-  width: 1200,
-  height: 900,
+  width: window.innerWidth,
+  height: window.innerHeight,
   scene: [MainScene, GameOver],
   physics: {
     default: "arcade", //the physics engine the game will use

@@ -3,6 +3,7 @@ package internal
 import (
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"sort"
 	"strconv"
 	"strings"
@@ -80,10 +81,6 @@ func isPlayerSolo(player Player) bool {
 	return true
 }
 
-func isPlayerDead(player Player) bool {
-	return player.Points < 0
-}
-
 type ByPoints []Player
 
 func (a ByPoints) Len() int {
@@ -107,17 +104,25 @@ func leaderboardUpdate(players []Player) []Player {
 
 func handleCommands(conn *websocket.Conn, message []byte) {
 	cmd := strings.SplitN(string(message), " ", 2)
+	slog.Info(
+		fmt.Sprintf(
+			"Received command %s from: %d - %v",
+			cmd[0],
+			Manager.Clients[conn],
+			conn.RemoteAddr(),
+		),
+	)
 	if cmd[0] == "join" {
 		data := strings.Split(cmd[1], " ")
 		pX, err := strconv.ParseFloat(data[0], 64)
 		if err != nil {
-			fmt.Println("Failed to convert position:", err)
+			slog.Error(fmt.Sprintf("Failed to convert position: %v", err))
 			return
 		}
 
 		pY, err := strconv.ParseFloat(data[1], 64)
 		if err != nil {
-			fmt.Println("Failed to convert position:", err)
+			slog.Error(fmt.Sprintf("Failed to convert position: %v", err))
 			return
 		}
 
@@ -130,12 +135,25 @@ func handleCommands(conn *websocket.Conn, message []byte) {
 		}
 		playerIdCounter++
 
+		players.mutex.Lock()
+
 		players.Values[player.Id] = player
-		fmt.Println("Number of players:", len(players.Values))
+		slog.Info(fmt.Sprintf("Number of players: %d", len(players.Values)))
 		Manager.Clients[conn] = player.Id
 		err = conn.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("id %d", player.Id)))
+		slog.Info(
+			fmt.Sprintf(
+				"Sending id %d to: %d - %v",
+				player.Id,
+				Manager.Clients[conn],
+				conn.RemoteAddr(),
+			),
+		)
+
+		players.mutex.Unlock()
+
 		if err != nil {
-			fmt.Println("Failed to write message:", err)
+			slog.Error(fmt.Sprintf("Failed to write message: %v", err))
 		}
 	} else if cmd[0] == "move" {
 		data := strings.Split(cmd[1], " ")
@@ -144,13 +162,13 @@ func handleCommands(conn *websocket.Conn, message []byte) {
 
 		pX, err := strconv.ParseFloat(data[0], 64)
 		if err != nil {
-			fmt.Println("Failed to convert position:", err)
+			slog.Error(fmt.Sprintf("Failed to convert position: %v", err))
 			return
 		}
 
 		pY, err := strconv.ParseFloat(data[1], 64)
 		if err != nil {
-			fmt.Println("Failed to convert position:", err)
+			slog.Error(fmt.Sprintf("Failed to convert position: %v", err))
 			return
 		}
 
@@ -169,7 +187,7 @@ func handleCommands(conn *websocket.Conn, message []byte) {
 		battle := Battle{}
 		err := json.Unmarshal([]byte(cmd[1]), &battle)
 		if err != nil {
-			fmt.Println("Failed to unmarshal battle:", err)
+			slog.Error(fmt.Sprintf("Failed to unmarshal battle: %v", err))
 			return
 		}
 
@@ -198,25 +216,16 @@ func handleCommands(conn *websocket.Conn, message []byte) {
 			}
 		}
 
-		if len(battle.Winners) == 1 {
-			players.Values[battle.Winners[0]] = Player{
-				Id:       players.Values[battle.Winners[0]].Id,
-				X:        players.Values[battle.Winners[0]].X,
-				Y:        players.Values[battle.Winners[0]].Y,
-				Points:   players.Values[battle.Winners[0]].Points + loserPoints,
-				Cooldown: 0,
-			}
-		} else {
-			for i, winnerId := range battle.Winners {
-				players.Values[winnerId] = Player{
-					Id:       players.Values[battle.Winners[i]].Id,
-					X:        players.Values[battle.Winners[i]].X,
-					Y:        players.Values[battle.Winners[i]].Y,
-					Points:   players.Values[battle.Winners[i]].Points + (loserPoints / 2),
-					Cooldown: 0,
-				}
+		for i, winnerId := range battle.Winners {
+			players.Values[winnerId] = Player{
+				Id:       players.Values[battle.Winners[i]].Id,
+				X:        players.Values[battle.Winners[i]].X,
+				Y:        players.Values[battle.Winners[i]].Y,
+				Points:   players.Values[battle.Winners[i]].Points + (loserPoints / len(battle.Winners)),
+				Cooldown: players.Values[battle.Winners[i]].Cooldown,
 			}
 		}
+
 	} else if cmd[0] == "connect" {
 		data := strings.Split(cmd[1], " ")
 		playerId1, err := strconv.Atoi(data[0])
@@ -253,7 +262,7 @@ func handleCommands(conn *websocket.Conn, message []byte) {
 
 		for i, connection := range playerConnections {
 			if connection[0] == playerId1 || connection[0] == playerId2 {
-				playerConnections = playerConnections[:i+copy(playerConnections[i:], playerConnections[i+1:])]
+				playerConnections = append(playerConnections[:i], playerConnections[i+1:]...)
 			}
 		}
 
@@ -291,6 +300,11 @@ func killPlayer(id int) {
 	for client := range Manager.Clients {
 		if Manager.Clients[client] == id {
 			err := client.WriteMessage(websocket.TextMessage, []byte("die"))
+			for i, connection := range playerConnections {
+				if connection[0] == id || connection[1] == id {
+					playerConnections = append(playerConnections[:i], playerConnections[i+1:]...)
+				}
+			}
 			if err != nil {
 				fmt.Println("Failed to write message:", err)
 				return

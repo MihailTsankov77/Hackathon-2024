@@ -7,12 +7,12 @@ type SpriteConfig = {
 };
 export class Unit {
   id: number;
-  SPEED = 100;
+  SPEED = 110;
 
-  score: Score = {} as Score;
-  sprite: Sprite = {} as Sprite;
+  score: Score;
+  sprite: Sprite;
   timer: number = 0;
-  game: Phaser.Scene = {} as Phaser.Scene;
+  game: Phaser.Scene;
 
   constructor(
     id: number,
@@ -42,8 +42,6 @@ export class Unit {
   //equvalent of update
   goto(x: number, y: number, newScore: number, newTimer: number): void {
     this.game.physics.moveToObject(this.sprite, { x, y }, this.SPEED);
-    //this.game.physics.moveToObject(this.score.digitsSprite, { x, y:y-60 }, this.SPEED);
-    //this.game.physics.moveToObject(this.score.digitsText,{ x, y:y-60 }, this.SPEED);
     this.timer = newTimer;
     this.score.digitsText.setPosition(this.sprite.x - 17, this.sprite.y - 106);
     this.score.update(newScore);

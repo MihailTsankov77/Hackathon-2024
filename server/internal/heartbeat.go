@@ -26,6 +26,8 @@ func heartbeat() {
 		updatePlayers()
 	}
 
+	players.mutex.Lock()
+	defer players.mutex.Unlock()
 	response := HeartbeatResponse{
 		Players:     players.Values,
 		Connections: playerConnections,

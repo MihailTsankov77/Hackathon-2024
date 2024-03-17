@@ -2,6 +2,7 @@ package internal
 
 import (
 	"fmt"
+	"log/slog"
 	"net/http"
 
 	"github.com/gorilla/websocket"
@@ -23,7 +24,7 @@ var Manager = ClientManager{
 func WsHandler(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		fmt.Println("Failed to upgrade:", err)
+		slog.Error(fmt.Sprintf("Failed to upgrade connection: %v", err))
 		return
 	}
 	Manager.Register <- conn
@@ -32,7 +33,7 @@ func WsHandler(w http.ResponseWriter, r *http.Request) {
 		for {
 			_, message, err := conn.ReadMessage()
 			if err != nil {
-				fmt.Printf("Web socket error: %s\n", err)
+				slog.Error(fmt.Sprintf("Failed to read message: %v", err))
 				Manager.Unregister <- conn
 				return
 			}
