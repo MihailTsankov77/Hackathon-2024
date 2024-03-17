@@ -37,7 +37,7 @@ export class Pair {
   unit2: Unit;
   hand: Sprite;
 
-  MaxDistance = 800;
+  MaxDistance = 500;
 
   constructor(unit1: Unit, unit2: Unit, game: Phaser.Scene) {
     this.game = game;
