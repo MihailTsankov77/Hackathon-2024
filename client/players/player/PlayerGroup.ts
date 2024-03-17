@@ -39,7 +39,7 @@ export class PlayerGroup {
         this.unit2.goto(plData2.x, plData2.y, plData2.points, plData2.cooldown);
       }
     } else {
-      this.pair?.playSplitAnimation();
+      this.pair?.splitForPlayer();
       this.unit2 = undefined;
       this.pair = undefined;
     }
