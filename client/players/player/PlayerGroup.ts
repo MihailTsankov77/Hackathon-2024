@@ -31,7 +31,7 @@ export class PlayerGroup {
       if (!this.unit2) {
         this.unit2 = new Unit(plData2.id, plData2.x, plData2.y, this.game, {
           name: "slavi",
-          scale: 0.5,
+          scale: 0.1,
         });
 
         this.pair = new Pair(this.player.unit, this.unit2, this.game);
