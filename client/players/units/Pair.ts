@@ -180,7 +180,6 @@ export class Pair {
 
     this.playSplitAnimation();
     this.unit1.SPEED -= 10;
-    this.unit2.SPEED -= 10;
 
     if (this.unit1.id > this.unit2.id) {
       socket.sendDisconnect(this.unit1.id, this.unit2.id, true);

@@ -2,8 +2,6 @@ import { Unit } from "../units/Unit";
 import { SocketConnection } from "../../connection/connectionMain";
 
 export class Player {
-  SPEED = 200;
-
   unit: Unit;
   game: Phaser.Scene;
   pointer: Phaser.Input.Pointer;
