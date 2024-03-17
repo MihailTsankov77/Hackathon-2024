@@ -53,7 +53,19 @@ func connectPlayer(player1, player2 Player) {
 
 	players.Values[player2.Id] = player2
 
-	playerConnections = append(playerConnections, []int{player1.Id, player2.Id})
+	if !checkIfConnected(player1, player2) {
+		playerConnections = append(playerConnections, []int{player1.Id, player2.Id})
+	}
+}
+
+func checkIfConnected(player1, player2 Player) bool {
+	for _, connection := range playerConnections {
+		if (connection[0] == player1.Id && connection[1] == player2.Id) ||
+			(connection[0] == player2.Id && connection[1] == player1.Id) {
+			return true
+		}
+	}
+	return false
 }
 
 func updatePlayers() {
@@ -203,10 +215,11 @@ func handleCommands(conn *websocket.Conn, message []byte) {
 			loserPoints = int(float64(origLoserPoints) * (2.0 / 5.0))
 			for _, loserId := range battle.Losers {
 				players.Values[loserId] = Player{
-					Id:     players.Values[loserId].Id,
-					X:      players.Values[loserId].X,
-					Y:      players.Values[loserId].Y,
-					Points: (origLoserPoints - loserPoints) / 2,
+					Id:       players.Values[loserId].Id,
+					X:        players.Values[loserId].X,
+					Y:        players.Values[loserId].Y,
+					Points:   (origLoserPoints - loserPoints) / 2,
+					Cooldown: players.Values[loserId].Cooldown,
 				}
 				for i, v := range playerConnections {
 					if v[0] == loserId || v[1] == loserId {
@@ -289,10 +302,14 @@ func handleCommands(conn *websocket.Conn, message []byte) {
 
 		jsonRes, err := json.Marshal(sortedLeaderboard)
 		if err != nil {
-			fmt.Println("Failed to marshal leaderboard:", err)
+			slog.Error(fmt.Sprintf("Failed to marshal leaderboard: %v", err))
 			return
 		}
-		conn.WriteMessage(1, []byte(fmt.Sprintf("leaderboard %s", jsonRes)))
+		err = conn.WriteMessage(1, []byte(fmt.Sprintf("leaderboard %s", jsonRes)))
+		if err != nil {
+			slog.Error(fmt.Sprintf("Failed to write message: %v", err))
+			return
+		}
 	}
 }
 
@@ -300,6 +317,7 @@ func killPlayer(id int) {
 	for client := range Manager.Clients {
 		if Manager.Clients[client] == id {
 			err := client.WriteMessage(websocket.TextMessage, []byte("die"))
+			slog.Info(fmt.Sprintf("Sending die to: %d - %v", id, client.RemoteAddr()))
 			for i, connection := range playerConnections {
 				if connection[0] == id || connection[1] == id {
 					playerConnections = append(playerConnections[:i], playerConnections[i+1:]...)

@@ -49,10 +49,7 @@ func heartbeat() {
 }
 
 func HandleHeartbeat() {
-	for {
-		select {
-		case <-HeartbeatTicker.C:
-			heartbeat()
-		}
+	for range HeartbeatTicker.C {
+		heartbeat()
 	}
 }
