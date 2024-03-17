@@ -20,10 +20,11 @@ export default class GameOver extends Phaser.Scene {
     this.cameras.main.backgroundColor.setTo(255, 0, 0);
     this.cameras.main.setZoom(1);
     const background = this.add.image(
-      window.innerWidth / 1.2,
+      window.innerWidth ,
       window.innerHeight,
       "game-over"
     );
+    background.setDisplaySize(this.cameras.main.width,this.cameras.main.height);
     background.setOrigin(1, 1);
   }
 
