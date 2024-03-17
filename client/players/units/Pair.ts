@@ -167,6 +167,12 @@ export class Pair {
     return [this.unit1.id, this.unit2.id];
   }
 
+  splitForPlayer() {
+    this.playSplitAnimation();
+
+    this.unit2.destroy();
+  }
+
   maybeSplitHand = (socket: SocketConnection) => {
     if (this.getDistance() < this.MaxDistance) {
       return;
@@ -175,7 +181,10 @@ export class Pair {
     this.playSplitAnimation();
     this.unit1.SPEED -= 10;
     this.unit2.SPEED -= 10;
-    socket.sendDisconnect(this.unit1.id, this.unit2.id, true);
+
+    if (this.unit1.id > this.unit2.id) {
+      socket.sendDisconnect(this.unit1.id, this.unit2.id, true);
+    }
 
     return;
   };

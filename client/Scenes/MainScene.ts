@@ -270,8 +270,12 @@ export default class MainScene extends Phaser.Scene {
     );
 
     spaceBar.on("down", () => {
+      if (this.playerGroup.cooldown > 0) {
+        return;
+      }
+
       if (this.playerGroup.pair) {
-        this.playerGroup.pair?.playSplitAnimation();
+        this.playerGroup.pair?.splitForPlayer();
 
         this.socket.sendDisconnect(
           this.playerGroup.player.unit.id,
@@ -285,11 +289,17 @@ export default class MainScene extends Phaser.Scene {
 
       this.playerGroup.player.SPEED -= 10;
 
-      this.socket.connect(this.playerGroup.player.unit.id, this.getClosest());
+      const id = this.getClosest();
+
+      if (id === undefined) {
+        return;
+      }
+
+      this.socket.connect(this.playerGroup.player.unit.id, id);
     });
   }
 
-  getClosest = (): number => {
+  getClosest = (): number | undefined => {
     const arr = Object.values(this.botsByIds)
       .filter((bot) => !bot.pair)
       .map((bot) => ({
@@ -298,7 +308,12 @@ export default class MainScene extends Phaser.Scene {
           bot.unit1.sprite,
           this.playerGroup.player.unit.sprite
         ),
-      }));
+      }))
+      .filter((dt) => dt.distance > 120);
+
+    if (arr.length === 0) {
+      return;
+    }
 
     let minIndex = 0;
 
